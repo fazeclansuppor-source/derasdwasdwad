@@ -57,8 +57,7 @@ local SWING_GAP = 0.08 -- slightly quicker cadence
 local LOCK_SECONDS = 0.85 -- keep player pinned during swings to prevent drift/void
 
 --- Self-reexec config (URL-first)
-local SELF_FILE       = ""  -- optional fallback (can be nil)
-local SELF_URL        = "https://raw.githubusercontent.com/fazeclansuppor-source/derasdwasdwad/refs/heads/main/jar.lua"  -- ← replace with your URL
+local SELF_URL        = "https://raw.githubusercontent.com/fazeclansuppor-source/thingymajigy/refs/heads/main/ker.lua"  -- ← replace with your URL
 local SELF_BOOT_DELAY = 1.0
 
 local function hasFS()
@@ -107,109 +106,67 @@ local function getQOT()
         or (fluxus and fluxus.queue_on_teleport)
 end
 
---- queued loader (HTTP -> HttpGet -> local file)
-local function buildLoader(url, path, delaySec)
-    return ((
-        [[task.spawn(function()
-        local function fetch(u)
-            local req = (syn and syn.request) or http_request or request or (http and http.request)
-            if req then
-                local r = req({Url=u, Method="GET"})
-                if r and r.StatusCode==200 and r.Body then return r.Body end
-            end
-            local ok,body = pcall(game.HttpGet, game, u)
-            if ok and type(body)=="string" and #body>0 then return body end
-            return nil
-        end
-        repeat task.wait() until game and game:IsLoaded()
-        local Players = game:GetService("Players")
-        while not Players.LocalPlayer do task.wait() end
-        local _d = %f; if _d and _d > 0 then task.wait(_d) end
-        local src = fetch(%q)
-        if not src and typeof(readfile)=="function" and typeof(isfile)=="function" and isfile(%q) then
-            local ok,body = pcall(readfile, %q)
-            if ok then src = body end
-        end
-        if src then local f = loadstring(src, "FAH_loader"); if f then pcall(f) end else warn("[FAH queued] fetch failed") end
-    end)]]
-    ):format(delaySec or 0.5, url, path, path))
-end
-
---- queued loader (local file only)
-local function buildLoaderLocal(path, delaySec)
-    return ( [[task.spawn(function()
-        repeat task.wait() until game and game:IsLoaded()
-        local Players = game:GetService("Players")
-        while not Players.LocalPlayer do task.wait() end
-        local _d = %f; if _d and _d > 0 then task.wait(_d) end
-
-        if typeof(readfile)=="function" and typeof(isfile)=="function" and isfile(%q) then
-            local ok, src = pcall(readfile, %q)
+-- Pre-arm on load (uses plain HttpGet for best QOT compatibility)
+do
+    local Q = getQOT()
+    if Q then
+        Q(([[task.spawn(function()
+            repeat task.wait() until game and game:IsLoaded()
+            local ok, src = pcall(game.HttpGet, game, %q)
             if ok and type(src)=="string" and #src>0 then
-                local f = loadstring(src, "FAH_loader")
-                if f then pcall(f) end
+                local f = loadstring(src, "FairyJar_URL"); if f then pcall(f) end
             else
-                warn("[FAH queued] could not read %q")
+                warn("[FairyJar QOT] HttpGet failed")
             end
-        else
-            warn("[FAH queued] file not found: %q")
-        end
-    end)]] ):format(delaySec or 0.5, path, path, path, path)
+        end)]]):format(SELF_URL))
+        print("[FairyJar] sticky pre-arm queued")
+    end
 end
 
---- Self-reexec config (URL-first)
-local SELF_FILE       = "jar.lua"  -- optional fallback (can be nil)
-local SELF_URL        = "https://raw.githubusercontent.com/fazeclansuppor-source/thingymajigy/refs/heads/main/jar.lua"  -- ← replace with your URL
-local SELF_BOOT_DELAY = 1.0
-
--- Read local file now so we can embed its contents into the QOT payload
-local EMBED_SRC = nil
-pcall(function()
-    if typeof(readfile)=="function" and typeof(isfile)=="function" and isfile(SELF_FILE) then
-        local ok, body = pcall(readfile, SELF_FILE)
-        if ok and type(body)=="string" and #body>0 then
-            EMBED_SRC = body
-        end
-    end
-end)
-
---- NEW: embed-loader that carries the entire script as a string
-local function buildLoaderEmbed(src, delaySec)
+-- QOT payload that fetches only via HttpGet (most reliable in QOT envs)
+local function buildLoaderURLOnly(url, delaySec)
     return ( [[task.spawn(function()
         repeat task.wait() until game and game:IsLoaded()
-        local Players = game:GetService("Players")
-        while not Players.LocalPlayer do task.wait() end
-        local _d = %f; if _d and _d > 0 then task.wait(_d) end
-        local src = [=[%s]=]
-        local f = loadstring(src, "FAH_embed")
-        if f then pcall(f) else warn("[FAH queued] embed load failed") end
-    end)]] ):format(delaySec or 0.5, src)
+        local _d=%f; if _d and _d>0 then task.wait(_d) end
+        local ok, src = pcall(game.HttpGet, game, %q)
+        if ok and type(src)=="string" and #src>0 then
+            local f = loadstring(src, "FairyJar_URL")
+            if f then pcall(f) end
+        else
+            warn("[FAH queued] HttpGet failed")
+        end
+    end)]] ):format(delaySec or 0.5, url)
 end
+
+
+
+
 
 local function queueSelfOnTeleport()
-    local qot = getQOT()
-    if not qot then
-        warn("[FAH] queue_on_teleport not available; use autoexec as fallback.")
+    local Q = getQOT()
+    if not Q then
+        warn("[FairyJar] queue_on_teleport not available; use autoexec as fallback.")
         return
     end
-    qot(buildLoader(SELF_URL, SELF_FILE or "", SELF_BOOT_DELAY or 0.5))
-    print("[FAH] queued reexec (URL-first)")
+    Q(buildLoaderURLOnly(SELF_URL, SELF_BOOT_DELAY))
+    print("[FairyJar] queued reexec (URL-only)")
 end
 
---- Pre-arm re-exec on teleport
 local function armQOT()
-    local qot = getQOT()
-    if qot then
-        qot(buildLoader(SELF_URL, SELF_FILE or "", SELF_BOOT_DELAY or 0.5))
-        print("[FAH] pre-armed reexec (URL-first)")
+    local Q = getQOT()
+    if Q then
+        Q(buildLoaderURLOnly(SELF_URL, SELF_BOOT_DELAY))
+        print("[FairyJar] pre-armed reexec (URL-only)")
     else
-        warn("[FAH] queue_on_teleport missing; consider autoexec fallback.")
+        warn("[FairyJar] queue_on_teleport missing; consider autoexec fallback.")
     end
 end
 
---- Also queue when teleport starts
+-- Fire on multiple states to be extra safe
 _trackConn(Players.LocalPlayer.OnTeleport:Connect(function(state)
-    if state == Enum.TeleportState.Started then
+    if state == Enum.TeleportState.Started
+       or state == Enum.TeleportState.RequestedFromServer
+       or state == Enum.TeleportState.InProgress then
         queueSelfOnTeleport()
     end
 end))
@@ -1308,5 +1265,3 @@ task.spawn(function()
         end
     end
 end)
-
-
