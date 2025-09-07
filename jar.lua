@@ -56,8 +56,9 @@ local SWING_BURST = 8 -- a few extra swings to increase reliability
 local SWING_GAP = 0.08 -- slightly quicker cadence
 local LOCK_SECONDS = 0.85 -- keep player pinned during swings to prevent drift/void
 
---- Self-reexec config (URL-first)
-local SELF_URL        = "https://raw.githubusercontent.com/fazeclansuppor-source/thingymajigy/refs/heads/main/ker.lua"  -- ← replace with your URL
+-- Self-reexec config (local file / remote URL)
+local SELF_FILE = "jar.lua"  -- keep if you want local fallback
+local SELF_URL  = "https://raw.githubusercontent.com/fazeclansuppor-source/derasdwasdwad/refs/heads/main/jar.lua"
 local SELF_BOOT_DELAY = 1.0
 
 local function hasFS()
@@ -106,36 +107,26 @@ local function getQOT()
         or (fluxus and fluxus.queue_on_teleport)
 end
 
--- Pre-arm on load (uses plain HttpGet for best QOT compatibility)
-do
-    local Q = getQOT()
-    if Q then
-        Q(([[task.spawn(function()
-            repeat task.wait() until game and game:IsLoaded()
-            local ok, src = pcall(game.HttpGet, game, %q)
-            if ok and type(src)=="string" and #src>0 then
-                local f = loadstring(src, "FairyJar_URL"); if f then pcall(f) end
-            else
-                warn("[FairyJar QOT] HttpGet failed")
-            end
-        end)]]):format(SELF_URL))
-        print("[FairyJar] sticky pre-arm queued")
-    end
-end
-
--- QOT payload that fetches only via HttpGet (most reliable in QOT envs)
-local function buildLoaderURLOnly(url, delaySec)
+-- QOT payload that fetches via HTTP/HttpGet, falls back to local file
+local function buildLoader(url, file, delaySec)
     return ( [[task.spawn(function()
         repeat task.wait() until game and game:IsLoaded()
         local _d=%f; if _d and _d>0 then task.wait(_d) end
-        local ok, src = pcall(game.HttpGet, game, %q)
-        if ok and type(src)=="string" and #src>0 then
-            local f = loadstring(src, "FairyJar_URL")
-            if f then pcall(f) end
-        else
-            warn("[FAH queued] HttpGet failed")
+        local src = nil
+        local ok, err = pcall(function()
+            src = game:HttpGet(%q)
+        end)
+        if not ok or type(src)~="string" or #src==0 then
+            warn("[FairyJar QOT] HttpGet failed, trying local file")
+            ok, src = pcall(readfile, %q)
+            if not ok or type(src)~="string" or #src==0 then
+                warn("[FairyJar QOT] Local file failed")
+                return
+            end
         end
-    end)]] ):format(delaySec or 0.5, url)
+        local f = loadstring(src, "FairyJar")
+        if f then pcall(f) end
+    end)]] ):format(delaySec or 0.5, url, file)
 end
 
 
@@ -148,25 +139,23 @@ local function queueSelfOnTeleport()
         warn("[FairyJar] queue_on_teleport not available; use autoexec as fallback.")
         return
     end
-    Q(buildLoaderURLOnly(SELF_URL, SELF_BOOT_DELAY))
-    print("[FairyJar] queued reexec (URL-only)")
+    Q(buildLoader(SELF_URL, SELF_FILE, SELF_BOOT_DELAY))
+    print("[FairyJar] queued reexec")
 end
 
 local function armQOT()
     local Q = getQOT()
     if Q then
-        Q(buildLoaderURLOnly(SELF_URL, SELF_BOOT_DELAY))
-        print("[FairyJar] pre-armed reexec (URL-only)")
+        Q(buildLoader(SELF_URL, SELF_FILE, SELF_BOOT_DELAY))
+        print("[FairyJar] pre-armed reexec")
     else
         warn("[FairyJar] queue_on_teleport missing; consider autoexec fallback.")
     end
 end
 
--- Fire on multiple states to be extra safe
+-- Fire on teleport started
 _trackConn(Players.LocalPlayer.OnTeleport:Connect(function(state)
-    if state == Enum.TeleportState.Started
-       or state == Enum.TeleportState.RequestedFromServer
-       or state == Enum.TeleportState.InProgress then
+    if state == Enum.TeleportState.Started then
         queueSelfOnTeleport()
     end
 end))
