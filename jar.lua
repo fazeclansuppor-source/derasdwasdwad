@@ -58,7 +58,7 @@ local LOCK_SECONDS = 0.85 -- keep player pinned during swings to prevent drift/v
 
 --- Self-reexec config (URL-first)
 local SELF_FILE       = "jar.lua"  -- optional fallback (can be nil)
-local SELF_URL        = "https://raw.githubusercontent.com/fazeclansuppor-source/thingymajigy/refs/heads/main/ker.lua"  -- ← replace with your URL
+local SELF_URL        = "https://raw.githubusercontent.com/fazeclansuppor-source/derasdwasdwad/refs/heads/main/jar.lua"  -- ← replace with your URL
 local SELF_BOOT_DELAY = 1.0
 
 local function hasFS()
@@ -1308,3 +1308,4 @@ task.spawn(function()
         end
     end
 end)
+
