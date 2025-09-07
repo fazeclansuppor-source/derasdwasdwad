@@ -1,1 +1,1256 @@
-local function bx(a,b)local r,bit=0,1 while a>0 or b>0 do local aa=a%2 local bb=b%2 if aa~=bb then r=r+bit end a=(a-aa)/2 b=(b-bb)/2 bit=bit*2 end return r end;local BX=(bit32 and bit32.bxor) or bx;local function X(s,k)local t,kl={},#k for i=1,#s do t[i]=string.char(BX(string.byte(s,i),string.byte(k,((i-1)%kl)+1))) end return table.concat(t) end;local A='15[:m93vg(pc=q]en$i{|z&t%w>*7},./-#xa0rflj8+6ydh~ubo;!@?)_^k<s24';local M={} for i=1,#A do M[string.sub(A,i,i)]=i-1 end;local function D64(s)local out,val,bits={},0,0 for i=1,#s do local c=string.sub(s,i,i) if c~='=' then local v=M[c]; if v then val=val*64+v; bits=bits+6; if bits>=8 then bits=bits-8; out[#out+1]=string.char(math.floor(val/2^bits)%256); val=val%2^bits end end end end return table.concat(out) end;local function F32(s)local h=2166136261 for i=1,#s do h=((BX(h,string.byte(s,i)))*16777619)%4294967296 end return h end;local function R(src,tag)local L=loadstring or load local f=L(src,tag or('@'..tostring(#src))) if not f then return false,'load failed' end return pcall(f) end;local function ROT(x,n)local p=(x*2^n)%4294967296 local q=math.floor(x/2^(32-n))%4294967296 return (p+q)%4294967296 end;local function U32(x)return x%4294967296 end;local function KDF(seed,salt,pep,rounds,bnd) local a=U32(seed) local b=U32(pep) local c=F32(salt) local d=U32(0x9E3779B9) if bnd and type(bnd)=='string' and #bnd>0 then c=U32(c+F32(bnd)) end for i=1,rounds do a=U32(a+ROT(b,5)); b=BX(b,ROT(c,7)); c=U32(c+d); d=U32(d+(i*3)) end local function B4(x)return string.char(x%256, math.floor(x/256)%256, math.floor(x/65536)%256, math.floor(x/16777216)%256) end return B4(a)..B4(b)..B4(c)..B4(d) end;local L={'[oweq?|-}[5sm{wuw:%q*mql3u$r9?1t&$~@=m<k9fsg*;m}%iac|o9d*o=5}bu4z3;3mfmk[!qn[b94nv7h}a}#[/qf>:y_&~|h,u%n3r_!.-;v.iyx7$6;cfsz=/!j1{(#,?/fw{-n$55+n/n>>95b:5n;}i%2tnaf(36b[;0:>$a%}b;d.r)$cm!((n0o$t_g&50[>xw.5i)2*o/q.@9d50mj>3m)|n9)&|axcvs|*n%i7&1-30=&(!0we0/opum:vf7j>f0+[o5!tb7,,|=k|09op&6<5#=f>f<b:&ue,1jw=usjp!7t=fse=0/opum:vf7j>f06q5m2mt7%,;y2z{wue9|<{-g+.|04&mj|}57%,i9bg3~&ctq7gbu4z3;3mf9hc!n@[[!s{{y.{aq?[/9k]fgp&$%;};<btb73.1)77t(5em/?(@u>e-u4:x~k9v/y}xw]m59kt#m&,|=<$f~,(3a^tn-#i!<b:zqg>ul9$b!;c!|v(o)$}u-ki?_zqfm<z{u]m#ysits%{!z2v{-^]v=y*~m~>m|;3x;e9r|},byfq$~6qrj755jl|vg=9:$!(x_}[i7a>ogci|qj3$-?ci_2}51@*f<b:&ue,1j&e||=z:%gct!q]!s&}xyi||nawb5w9xm~%:/7,;jc1u5yct$|qr0g=~9^t;0e}n/}7{ujqu~:q?s,=!<<5f/:9v|r7bau*#_u{o%{]f0,gi}{>:y_91=f>a6bm&~3,/mzq[sxcz65c3/m.0%^i&0ec0q9::5>$:54&o1>*/_mpxs[:bj_3bgx}!)dqty|$[~}7i0lcmu:>o_%euj;pu9e|{$l}xj}[[)@7ugu{3m!p$5s]f<{t$%}t|1bvf${>;w<vr/r,$~k5!5^m997$?g}[9)j}1w4[[}4n#ge]-6k1$-)$n~<|/5e9[9}m?z9,/q$iu}1m@=f:z54};g^t&w#,?/fw{-n$5!5>-;/|@-g]bg;}i%#n&0g7a=;vf%3.$l.}ouhq0(mv&j,q-uuwtn5vo~+c!n@$3g2::)w]a|k3u0u(#%ytn%d,~g2m&0:>$ywiu}1m@=f:z54,!s_:o6pv?59:va7$3(6ii=p>m/k:v~,c&/s=&)d7|<@moj1*/mi%[9jqu~kqruqq5${i3/*&t!-[!=7$3g2${9.7~wh5u$^>vg)t//f=m|_:vs|*;7di~_=5f|8m|j4,!so:o6pv?59:va7$3(6ii=p>m/k5f~,c&/s=&)d7|<@moj1*/mi%[9jqu~#g?},cxzkzmn6vtmj>[u={36{(f}.]/%&wzm;>[%4|uw#nn5?v:je}|<%w[0hp;s=v|98vi5w>z|<&:n6>zn@$3g2:v}.]/w+:55)([)4inl->a|)m{ge]~uc|[9!]0=pcvyeg!7o5f)59{!9:va7$3(knxqbm1%k{!9c9;1{%b7q|vs?nxj}wr(kq3/r,$9(%fj((1yli&(evrm^(/u!$[y):[nc7;j?{u5r(?=?&30ge/u?t@j9,/=}e[_oq!<np?9[.!%tc:ye|{$l(fa7[[!s{{y..n%r{o(k]r=,in!)&m|_3!ue>$~9zb5hqz-=wz-qe/!xw@)*v0~j}[sw9owkt/g@en<&wzm;>[w_vm$#};j?3:ji7~l.q[<<vzatqru:c07o5f)59$0[(fa7$[}~iv_bm1%k{!9b(?$_%;-#};ga[oje}|<%w[0hp;s=v|98vi5{>m/kgx!l%x%u*rg2:v}.]/%kvu(!(3ju&-m6.z/2mvn]=r(kq3/r,$um%x)=}!<^{?!e3vlk7f0}[#%2${a=*/-.[/(/]ra/v518,;(?9f$z*!|!7{ybp!=}>x7==-92pu9e|{$l(fa7$[}~iv_bm1%k{!9u(r(|qa$#e/~gg9u6$[%4$uuz,n9m]&=-t$j;n-w0c0m3|5)ig#q?t#)!,!$mc5!up&/6{m$4erl@9r-.|n):i~y8e9;pq@)-ttgn[ow[|z7f>:sz1;<|n:/7,;lkq#_*:a1p,{5#g~ua|i/{];(7q[(opa-mgo_p=//^z&<>9&}lwoy{m#72&:<>]a5^5/qy$n~!|~7x7/~$e0q;nx12z/(:3r/~5;w)};g^1t;]33%ugta$i&(s{in>q;s!v5$^]@<yz$gfmb%kmv0v};<#n~9gvr=r9;u41!<f5#qet:0lw?0>1{|2ii<c>m7kv1ws(rm8v51yea|_v3-:,-~|q:jxqz|9gv}1e/yxpum:vf7j>f0h=~yn>~/)&?%k|0mawxw-vm0he0<k9f!]*~=gq:0o=9<e(@~=q5_2n?|=950[>xw.5i)2%5/<|t0gpx(*5agpv90#c/(hixlcqa<>7i!@,|~gg@}((zs8{?|59v5l%#u]:iu_:[ng7;-<v99/(b%j{/m;,;gxt?_|7/a9]o_j=9-ji5=r,0g^}t):9oa^%oum1im2{o/$.ms<{!0)(@|)|mna};1bto|3>nl7,oux,&a@:x7-t$q!$tl:||7qi-sxg/yi>t}[]/$u:/=^(v=)va$#=~9?9vs:>;<%7r-4qa0mqts[g!s@it/]v{ndwozn5#qs$!j!}a0):-;;3;=z,x6t{35?tb73]n79%:-!%uqc=vs*,$-o|f=>m@mk%by.[bu8i{acqmz;10_bpt~<t~/x79<#:@j(>|g[,o!;]00c(fy,q/u2|tl79&=j%fw]1i$y1o<>,;(ln5u!g&-@z/|~=m1#vx/+mn=,}b08,&<-:0-o9{5z7an+q9/(t?a5$v=~v9j!9bu?15(!([%4inl->a|)m{j],-~?$@1hz:wm%x)=($jd|@a5|&1u}xu{1rj6i{%*.ms?[0/j}in4inl->a|)m{/3,/mzq:u4pzac(:w9(50oif_3{[08%[ui5ow?no0}]a}![!9/=t%<|~(87a=@3@0i>n%.7@mkw5)[q?5eguw!i:0#,?mr%0n@>|-bnon,}/w^3/zkv9w!v1|?>a=m[vqg.mq$}{!bqr)5pv99]z=^$@)*v0;k>x-i15w]1v7,*!(;g5q@=iwav51~>;0kt@_|*/j}q[_fq|<5*x_pq-qjno}e9?|a}{~u*a<|1tji]fz23~zs(rm8v5nf*9<2:3_:}n~|3|(8q0<9cx_4m#y]*!|lga6]{uz_$v<2:-m,7!$#($5rwf|<i51+7m6a|t5z}19{3|(8q0<9cx_pg-9_|fg1von+wo}h5{$k5v_bm1%k{!9rctg6{/j#}a;a]|a]=a<n,#~rc|||(?9p.~-l{@<p9?;a%?15&&5)&{a7*as;1z=wnr=?&30g7a=;vf%3.$l.}ouhq0(m=ts>=#u4|r<3v?=kcf1u*rg2:v7&.1w!11|;p@7?*~|;,~$2t@_]./9$w#!bcm)p%fy[=?gn5xye|t/fw{-n$[!!1v7z>|0!{;~;]3|)|1-8z0/x:;0:>$a%}b;lm@<+:9y[q552no}e]&1<}/jw9x$?{o({]0;&wzm;>[%)i$1yifu?nxjv*-6,n5/8z:wm%x)=q/jdi|/%3vlh(rn75{}8n~ng7;-<n?~,>[w_v1|?>a=93f5(7/9$p&-fcm/cmvy3]5w;[-w0|{$l(x-(m[!tto6,}m(ee!mj>376i16c*|1@mt_bi;q<vr/r,$~9q@j:35!)toyi|t|s7xwo5#5f19j!]/%k{~~s$nu_vm$#};j?mvm3*~7|,a|=,$um%x)=}!s8$tl:v{~4}:5g1i$?n:({]fz,]bz}5amp%bgc|r0kt?5z}19%3|gr,$um%x)=}~sl{?|*&{%{n:-z9xy|{i|#]0z23~zs(rm8v57x>mao${/p]o~;n5ue9?6?vz-03olopu9e|{$l%o}%>|-knxqbmmj;:55)>316|/7@};=_t?w(,/6#7{ub=9g:={%9&f|^5xye3v(l>:wg$[j4tum6=/<k11=;(rayv1;u,m|k3x(!tx60tnw5[r=#[!(j.0sd{f)5|&%y7#u][r(knxqbm1%k{!9)(@|)|mny}n5?vvzg*~l.%3/k,|~vg?(1.~!4$?<(3v/ypf0hg$wpw$a)it0}(x!$%ny{vm$#ea|ut?$(*;<,.@-jpu~n]@_(.uu!i3<pv@5-,3n*9ow6${a%enw;vzm?p@a?i1m6>-98{oji7~l.q:jxc|a&c:_(]$6tc:ye|{na>{j}[3(u$@z{]a(^3u1;}i%jt~|d7/n.[@_&i1l:%#90e5gdmz9#muj_it<pt{n17#!=qb}6&x)7.~lk:5_^e3=?im!e91u?toje.|<.,o~rq0}&%f9,}~yxzf_v9t|<w?5[&&z8{{|{.~mk3u0u(#%+&$1?*m(?3f$[9rz$q3/r=9jmqr}7=-5<:f<]5tzrwbug[uw]5&j[]m$;15!up&-kv518,;(?vrsi}:6-qv|rez;ngo5qg/y!7aye9vl6[!=7$3g2${9.*0s+[-_b%3g)i1z6.!axmm0$7/m&et|k,!)cct((q-m)5r<v9vjlwbug[u9j${a%]-6k[u5/pi/)i$1y{z62mt;3./mz3|gr,$ump?/=g~w8n?n(&t1j7x/i5{}8n~|>7m0b1z/j}ink|~6d,;;_t{ji7~l.q[0ocz=@(?$:e-m^3o6cm31jp:-(m[!=i{;n7;/k[-s~$nu_vm$#};j?[@q&./1te[ufcz!pg@y%]:wjifl59|1%c@n5$#5uno6>,;/_{~z<c&-_t$m@7&|am?yg.o6-qv|rez;ngo5qg/y!*@/:mvl6|/a71iu^gz!.]/%k5-7;ev<j&n6aqa/@[?6g,-l9,~}a];zq.b=]q$5!if)]vowl7x9w[r(4&i=nz|$_90mj>3g)i1z6.!axm9zm,$w$7iw#z:wm%x)=(~!oi3sv|;<]wo5]vn-4t/j.>|qh3u-^c?z_|16x,aaot?u|}1(cqrnr[fa~90}#m[u9%9gxq:!9::ui1m<|gz;{}|z^1!9be&/^i1;y71~~3r_?z:ywe||=,$um%-=r}!<^5rap5&m^>va|9oy~::%$./wl9-<^]t=<inm}7|gg[?sp.-<,wx~hz:wm%x)=}!<^5fn}|{~_7ou(1$!un/==','7iw#z:wm%x)=}!<^5xye|{$l(fa71iu^gz!.]/%k{!m;>[w_vm$#e/u?9f~37asqq1!w[&)-m|!j59sd{f)5|&1j}{gimbq?&v<^$tzccxuc:;7(9|nf7m->}{l3];s$q3/r,$um%fy[=?gn5xye|{$l(f0w[#%{(f}.]/%k{!m;(3a^tn-#,9a_v3_e}19$%b0hctlc=m_,]5(8|x=.1?60}#;n$:w?n{gn*!gb%f6;>[w_vm$#e/u?tojp}1~n,3-#q0g5%#===$_@zt_#,o$l(fa7$3g2:v}.]aj;:55)>3|@|/je91u?tol3];s$q3/r,z<ccv1=>0s9|ra]mf<c>{}i{5(6nb<&};sh9#9r(@6ji:7f*9l2vv<giu;,,{-b:|)q(t0(($j2v9/1v?lywi;|1x}~{b=&}|/ov~=)>v%!{a!e91u?tol3];s$q3/r,$um%x_9=zs8z:yi{:n)}:w$9:%2{{a*]/_+1~=;}{y_|/;dea=0t@jp>|s=p&-p[$zmqfw(]tgn5xye|{$l(fa7$3g2:v}.]/%k{!9~(@/<v90#>0)#3-76];s$q3/r,$um%x)=}!<^5f)59$0[(fa7$3g2:v}.]/%k[-s~%is|qa$#e/u?tol3];s$q[$j]0;g%rl7};g^|fg[9:u-[!=7$3g2:v}.]/%k{!9xg3<!&|n67z-?3?zg.a<n,#~r7|/qc?6m.0<?5rs.&:$;(#!z[i}u&iq..aa&wzm;>[w_vm$#e/u?tol3];<9}{yy};69p@lmw!m8mo(#,o$l(fa7$3g2:v}.]aq![?~,>[w_vm$#e/u?tol37/0$}b}lqu~npfy[}~s_$?7:&tgs>:jg:i!~5v_.,|0!1|yngt|^|~l6,;<xzo=3./mze&-xq!-ji:)=}!<^5xye|{$l(#ywm:}6nf7*}|-2%f6;>[w_vm$#eaa_3u769rz$q3/r,$um%f(:q5_@5a$:|t~^}f|7::}o:3j.*|}b3o(<pt$u9&0ge/u?tol3];<},byfq$~ng@uc=/yj5#wemf6a>xu.m5w4tx1>*0|o$f~,>[w_vm$#e/~23{l9*~):7b!bp-uw.o)7}~ybn?z#,o$l(fa7$3g2:v}.]09^v$<<*!;%i$1y&m;2:&q@,-;>,o!;55~8c{_%q/!sn@<7|tgf7o}%ir(p&og,7nwecxwvw?g<$556]nz>}{l3];s$q3/r,$um%a9:q$!x}3)5v?;r%ta5$[$4n[n>9b~k{!m;>[w_vm$#e/~03r_{>n9<vr/r,$um%x)==-92pu9e|{$l(fa7$:w4{x6>q9z;vn|<e37+&~m@*n5?3&sg,56%,b%d]55mg:7-tz<^5xye|{$l(fa7$:5k&[gq}1%o:0sm(?|~i1;y71u^t?(|>;m-,oyhcz|cc:7[3-_sivg*5v1y(r|7{[1~.:/=7!(b15<;wi%u{-$6{a=a9r_e}19%]/zfe0gqqryg=fgn5xye|{$l(f0w[#%?gz!.]/%k{!m;>v%+znl@q/$~(9y{*~1?}i9;g3~9=vz:g/!v5x)c|&1j}:_wm:m~[?_9.m0j1-5/%[|yt$%0,!/azx=+m|s$q3/r,$um(v9,}b1@5r6]1@5l*o77:{(4$i|==0(^v$wuevz~v11ymbw?tol3];s$q3/r,$~q(:_[]16^zfl}5{nf}v0i[o%2t:%q*/-c:/qu(f(_i1~f71~;mv$i7/mm7&-xq!-ji:)=}!<^5xye|{$l(xz{5bqb:[7q}|y+3!mj>31~|/1i*m=^:@)]>~):%3mc|uum%x)=}!<^5xye|t;d(x}{m3(dtx/i>0gk3u0u(/y{vm$#e/u?tol3];s$q3/r,|69=v1m7[$*|@<1q?|-}[565{5!nbgq$~wg55-a]3<?&;$87mq?:@-(}-<9q[_jc9g1>bn=79=^zfl}5i)e%b!^mi_b%x%i.~)b$f~,>[w_vm$#e/u?tol3];s$q[yjq;/qc3y(&f|^5xye|{$l(fa7$3(knxqbm1%k{!m;>[w_vm$#e0/fef-(*njw.:j@}$~|g@u%.fgn5xye|{$l(fa7$3g2n:/7,;lk15l)>3=+{a$4e0~;vfwp=~am,#yb=9=p>x7-tz<^5xye|{$l(fa7$3g2:v7&.1w!11|;]vn@|$n@=3a_vf-p./y$%[5xqu~ng@!v,n-k{@svn{j_qf171iu^gz!.]/%k{!m;>[w_vm$#e/u?9f~3>u;,,{-b}?apg?u1=-6^|f=pvu0[(fa7$3g2:v}.]/%k{!m;>[w_vmn@*9|::tq5.1l:e:-;q0m|qx7-tz<^5xye|{$l(fa7$3g2:v}.]/%k355sem1@{xn~7|mf[o(&>n17w:~8,&/y:!yx1#y9}0)scanv{u}l{|<|:v}.]/%k{!m;>[w_vm$#eaa_3u76];s$q3/r,$um%x)==-92:uw0|{$l(fa7$3g2:v}.7;1k1$_/>3abv518,;(>}{l3];s$q3/r,$um%x)=}!sy$@a5&{={$bug[~$4$i|3ia}j55_-]0y_,$%~7z_?vr)3>~1%,x~<,$yg%fy,(z%tc:ye|{$l(fa7$3g2::g$.#6${!m;>[w_vm$#e/u?[?yz7mm3}i9b7t)-9a0jmx99}0nre;1*c!n@$3g2:v}.]/w21$|wn#w_vm$#e/u?:@-e}$yw=uqvcm/c5vs9(nwp$@amvrm^&?0)[buk1f5&9b~k{!m;>[w_v:6y.m)dc&sg}n%.7@/k,zl9cr!(&f|^5xye9vl6c!n@1iu^gz!bm16@n09i(?ndt$%rea/bvvwv>n)9.i}l,zlc=:_0(5qkivse5tma%b0{9x%2tx/p*as![f~,(3a^tn-#.!axm9qz}~).75uxqza|c&u%&f|tc:w[t:n]wo5]v&(tto6,}mg-{u5-e30;i1md,!~):&)3}19$woufp;/$=x)m]1sd{?n5mv--[!qn[b94nv7@i&j>g{zc1maz,:6$&@<%=z_!]!($(r%@,$9(%ry[g/u4nx65vrqo(x(w9:%2ix/q]az;1/9!e3<kzn/+>0z>}tw(,1)}q19z9t;85a9/vx0],|(e{:$k(fa7$3g2:v}.q~6k3-s-]@=sv1ly>$}?9vs&*;<t,olr]0=(=fs%e-!oifg*[50[[!q}m{wuwin{,;-4]u$)ct%@{-5#g~~u[f$9*~%,,r1hz:wm%x)=,0g^}rap9?m^}:u%tr(4tou.*a_2{~(u]f1<{an@7n~x3fw:>~1:%3-opx9d%x)=}uq!$tl:|t6xpf0w9x12mt7w7!$2p$5s]f<]|u%d,f/bm?s&}5;9ev;hz:wm%x)=e-a^ivn*|t6x(#!|1i~{(f}.]/%k{!m;e@7+|au/$&l@9r-.|n):i&-ie915=f9,go0k{@a&(f6^>x;71#q?n:g*g1%_{!<^>vg@{u1~};g~z?s|>|w%3|gr,$um%x)=}~!4|r)}vondwoze1|<|:v}.]aq![?~,>[w_v5%f>0a0m{ji>$l|3|(xq!-ji5=r,0g^iv)*|tg->:!w9rgu::g]*;s+vu$r$n~!|~7x7/~u[f$9*~%,,r-8q0=e=z(9e5j7$?g}[9ly7f9g[b!b5zj!]/%k{u-b>3/@imn@7|=kt?z|]~m,%3-bq0=g,9}.907s7fn1v{q-(#!|1i~{(f}.]/%k{!m;]r=yi$%6eal@m@0:9rz$q3/re9g1{un=}!<^{?!e5t6f>rqk1{w.&[=q7;$d3un<*;1)z$%k|max&:=3(0($%:joe5~npfy[&f|^5xye|{$l(#ywm:}6nf7c>9q2%f6;>[w_&nlrmbw?tol37/0$%[}jqn%#p?5gm$wlz&<63t;a%fm*g#q?t#)u.!(qt{0!(rg!&$w0=/~x:&s:=a<9.[!lz:wm%x)=}!<^5rap5&m^>v0g9x}kgz!.]/%k[-s~$nu_vm$#7a=;vf%3}|s=q:ybp!|p({51]1-4z:=*vf6ap5}}[i7?gz!.]/%kv$$/etn?vm~6(ml2mt)]e1an.{j4.-zme[==]$w@:o6]v?5lcx731#y~ivs%}mqhi9/;qxy_|/;dqb9}3f$[9rz<v#$j]0;g%f-w]$ud{?n5|tg->:!b1{wpno/{&;-#350u]rqu9&0ge/u?t?w(,1)}q578,&qg%f!mq/;^3o6g9311z1a|{|<|:v}.]aj;:55)>3n)t~<b.;<<tb73zosc|#9letlq=3!%95}oif</9!7awbje{3z7{{n|>a})59%s$nu_vm$#e/u?t?z|]b=-c/_hq!/#p@u.goub{?7c&{=pwojt9[qs$?5&9b~k{!m;(3a^tn-#,9a_v3_e}19$wbyfqunvct5%q-w;n@03.5_l(fa7$3g2::)w]a-;3!9?(@/ytn;6,!_?[?(:}&(kq3/r,$um%x)=}!<^zv)*53%r(x}z[m<|:v}.]/%k{!9u(r(|qa$#e/u?tol3.n1:q578,|-mp?1=e/sk{@a7&t7f>[!}:iuktr;).!(%5u-)cvn<|au+q~~om576];s$q3/r,$um%x)=e-a^ifn13r7m*o(wg#q?t#)u.!go3!/;e3)<|r0ge/u?tol3];s$q3/r,$um%ru(g~jli:6*.5_l(fa7$3g2:v}.]/w21$|wn#w_vm$#e/u?3f$[9rz$q3/r,$um%ru(g~jli:653v-9:va7$3(knxqbm1%k{!9rctg6{/j#*|<@m{(97~):e&-jpu~tgts[.u!k$t1.mv7xc!n@1iu^gz!bmmj;:55)>316|/7@};=_t?sg>5l:7nwxctazq?}7(uj2:r<3vvmf7b;z>|/2:v}.*as@[-_-e[wav51+7;a)[r)3}5!$(@%@z:wm%x)=]u5_$?}e3&%)pf0|mi<b::nt,!nk|09octg$*x$8qb9}tol3]~=,}b08,|-|%#==]1~;$t71mfs/c!n@$3g2:[|>>aq^3?~,>[w_vm$#e/~kmv0v};<9,b}8,n9m(v}[=o94|a<1vf/(>[5c:[}6its&9b~k{!m;>[w_v1;ae0/)mv%3*~7|,a|=,$um%x)=}!<^5/==','im~6qb9}3f$[9rz<vr|+}5~rct9v,-$4n@63v?q9::z{5bqb::mp}mzh5-_^>v=j&1|@,@<)[f$iz~){7ind7:9d%x)=}uq!$tl:|t!l]?aq>|/2:v}.*|_b1un;giw01|$-t;g;9?z|>m<z,;|=,$um%x)=}!s@it/]v{nj(rn7(ius$:/q>t!b=f~,>[w_vm$#e/~23{jg}5y$e[ar]9g1%f<[5u_ln?|*&:n<*xui>|/2:v}.]/%k{!m;>[%!|~7x7/~o3fy[]!($%[0aqz0p=vy5]104:0l5mf~f}[ln$[6?gz!.]/%k{!m;>[w_vmn:7m<4m3-!.-687[!fe&9m.o_[e-=tc:ye|{$l(fa7$3g2::6n,|}?{u(k(fz_1|n:7m<4m3-0}1m[{bux]9/_{un=}!<^5xye|{$l(f0z1r(snoa=]0(o[-<wn#w_vm$#e/u?tol3];s$q3-/qa_mv{g=q9soi:631t|-}[l|5b!~t?_..aa&wzm;>[w_vm$#e/u?tol3];s$q3/rpz<9cfgm=nj;$&<3vfj/c!n@$3g2:v}.]/%k{!m;>[w_vm$#e/u?tol3,9|!.{y0q0gp(?!%.!%tc:ye|{$l(fa7$3g2:v}.]/%k{!m;c&/s9&0ge/u?tol3];s$q3/r,$um%fy[=?gn5xye|{$l(fa7$3g2i{a*9b~k{!m;>[w_vm$#e/~&mt0]}5;b,bw!10/5g?ju};g^ivg:.5_l(fa7$3g2::g{>|=&wzm;>[w_vm$#e/u?t?=3=9($(||=,$um%x)=}!s4ivs#,o$l(f0w[#%{(f}.]/wl[/zt(?=?imu-t;g;9?z|>mw<v#!le{9d{u$1]5ukix6(5vl+7x5{[r(kn#%p.!q2$u5^p@)@{a!e91u?toje.|<.,o~r]9gvpf9,}u5l50g5g3my7ouf5ius$:/q$~wh5u$^$nu_vm$#e/u?t@-:*ul:,a|=,$um%fy[=?gn5xye|z;rzbuwmi}9{{a77a0j=0mj>vg+in9e91u?toji,/;}7&whq;<5=3lm5/j4|?_:|t|rw{9{9r6{(xg$.#6$%fy)(@|)|mna>;g;[?q(}|<5w#}0em<t1?5eeu5l:fl5mf~f}v1u*rg2:v7&.1w!11|;%37?t~~y*1~@mt)3,/mi.[};}@~9=vy[g!%^|f=pvu0[(fa7$3g2:v7q.!(dv$<wn#w_vmnf7m->}{l3];<},byfq$~|g@u%};g^|fn4m3%<iiyu[bwknv<,}mzo11=s$nu_vm$#};j?vrsi}:6-q:ude9(ji:)=}!<^5xye1fm<zi!}m:}y5v1+i/*_^,=;*bw?ma$8.;g;9?z|qimn,i;rqa_mwt-qe/!x1{(3.5_l(fa7$3g2:[n,.mqee!0aptny9&0ge/u?tol3];<9}{yy};69p@lmw!m+9x(#,o$l(f0w[#%{(f}.]/wb[z9!etg@*u=+7my?[?(:}&(kq3/r,$um%x_.=/y(|fl*53}/gijc:iu_${a%]a-23!%s$nu_vm$#e/u?t?w(,1)}q[}y}$~5=3~=>0sj|tg590ly7--g{[q~{o<n>1<&wzm;>[w_vm$#};j?mtzi]~1>q:ude9(ji:)=}!<^5xye|{$l(#jwm598{i=p>n_2vn=;(?$_3u7!};g~t?uv7/=|73<hz:wm%x)=}!<^5f):1f99:va7$3g2:v}.]/%k{~(ue9|yt$1?*n$~3?zg.a-%3|gr,$um%x)=}uj;n-w0|{$l(xun9b7{(f}.]/%k{!m;]@=y*u1x>0aazo!t*/lm7i~r7z;$qfm=(1-oivuee0g]c?)z>|/2:v}..;-4%fyu(r(|qr0g=~9^|x7cqa(7]&|+}59(*o=5,0g?[ow[t:00p?n$i&<o1tjiq~6@n0~_wiy;m|0h=~9^|x7cqa(7]&|+}59(*u=r,0g^}9)0e0;3(f9e:isdn:)w7;q4zz92et|yv:1f7aafm3-i]u6,q:ude5~tg?q(}~s@$?/p&50[p?n$i&<o1tjiq~6@n0~_wiy;m|0h=~9^|x7cqa(7]&|+}59(*o=5,0g?[ow[t:00p?n$i&<o1tjiq~6@n0~_wny{|16-.;5?g3-:7n1%,/9lv!1q(tw%};g^nvl:1f99:9n@[[!s{{y..9q!:1zs(@-_{/ml7||_=tz$=u;|}{yjquzji:)=}!son:6~1?m#>{5iciu%n:)%70gk3u0u(#%+&$1?*m(?3f$[9rz$q3/r5a)5pv99]{w;%v739f~<(rn7m:5+izj!]/%k{~(ue9|yt$1?*n$~:ts=}1%..iw-dko[w{7-tz<^5x6.1?;r7fm|$-0%{{)q%@u^vi~;3r=o|~;6e0)b:rs:>56|73!!,uz,(v9,]-_d:rapm37f>v0}[#%25vz.=/n!nnzk]?g+znl0q0)bvr0(}|w.]rlh,uzmc&~=}z;o:uw0.5_l(fa7i&<2>{a=*!$2{~z<ci%!|~|r,!_?9ra3>-l|%i!#,|<c%rjm=0sj$&a31&5l}[ui9@(4i#=>>1wh[-!u]3a+i30ge/u?t@y{.-l|$b!8e?=p9fy1=/s!z3sv&50[[!=7$3g2n:/7,;lk15l)>3=+{a$4e0~;vfwp=~am,#yb=9=p>x7-tz<^5xye|{$l|xun1{(ut#=6.!$y5-(u70g<|1mb7z)xz?!v}/j.$[$f]0ay(xg=3b<opu9e|{$l%o}%{|<|:v}.]ass{uske[%@z;n@}aa_7-13];s$q3/r,|69=v1m}i$7$?g}[9)j}1n7=[}bii7n>9gk[$5s(3=s5a$/e/(_t@_(>56:.iw-7za&=:79&f|^5xye|{$l(/w]1i-u${a@}35?5-w<e[wav1gx70<b7-13];s$7iw#z:%5cvl-ttgn[oweq3~)>ijw$[s4n#g,}/w21nzr=i%j|~;6>/u4vvzg>11}7&m<,&=x*9-qe/!xw@)*v0~j}[sw9owkt//y.;u;5-s>(?9u9&0gn&y_]tye>$%~%{ujmz;&qvy.gujl,|ap3?6->5}{m@gx::mp}mzh5-_^%[s|qa$#e/~03f5(7/m4,o<d.fm9c3yq]!sln?m13vjhc!n@1iu^gz!bm16@{!0*]vg~|~lx7/z?q?zi71lgcr-vq|-em:_%]9sln?m13vjl>:wc>|-5&[|,,|!%15s^%9=8&$%c79~#[;0:>$a%}b;lm9g|q@jd=--ki[m6vflr%ojg{[$+nxnc7;0!$u-^]v=ymmn0*/z>}{l3];<%7r--p$~npfy[}~!4|r)}vony>:;u*rg2:v7&.1wb1n9-e[/i&$;57|/btb7*]bl.%i|lm0a}1t9g=09g5fl59{n}}{u]ciud&i=6.!$y5-(u7a<8}~mk&a=/m{(x}$l7]/qxgv<c(f6[3uj<|0l:5{!l7x9w[a<|:v}.]/%k{!9rc&~@znl=7zy4&9yp*;nx=@mc|uum%x_(]$6tcv)59{!-[!=u*r<o:1g@g1wee!9}]@l)|/5#.9ax[?zg];77}iwo]95mct5(,/yoi?_e]37awo}%$:wkn:ge}z$h$f~,c30|qa$#e/~kmv0v};<9w1jbquuw%0}[(1ykiv/pt?ly7tm*=[}r&5|p*0(;1z%s$nu_vm$#>0~z[?ngzn)77&/k,$6~m0}.]u_;nxu#,o$l(f0g9158nfa+.!_h{;~;*!g<|1mb7z)xt@_(]ban.{j4,t|tcfs[=!/tc:ye|{n<}-yg[ru%noac]-6kp-s-(i/.|~l@=36)[?(v}#;,,[~c|uum%x_%(o!di:|k93~<z{531&gx:3wc9b~k{!m;ev%*i1j6iaah[!0(}~1:(@/k,t<ccf9,w99<zvn[g!=pcr6(|&)2vr(pq/%j&ans$nu_vm$#>0~z[?ng&n)i.bs;qaap(0!:]u5l9{yi|z7f>xw]z@u)tx/ii39w$;aaw[wl[0$de-zfz-76];s$q:u@3;/p*m!9c$l^3o6^qt;0qv}i1{|@vty.p/lkt!;;,o5~=&_#e/u?[@ja*~9.z{!bqf)$qrj:]{u!ifn}|i0l7#y(1|<|:v}.]0(+cnz^w0%){/m6>/u8t?0v>ny<vr/r,$~yc3!%q-9_no|593q/gnu!(b!6nxgqenlk3~9&e3-~m#7y*mgb:|-v.~%mw@/k,&a/p?=[]$jy:#y:|iu-[!=7$3g2n:/7,;lk3~9vevn@z~9#g~~,m&0i,/mi7&wlemy=w|y051ylit1pzx!9:va7$3(8t1nc>m0~[0st(@l@{a$4er<)m?z|pmmtw#}+[?6r>#/7,!<6mo}eii9-[!=7$3g2&[76*0$;55n^v3)~t~<6,!<atb73pr(kq3/r,|/|m&j,]5$4[m6]1?mr7fa5$:wd*#=$9b~&wzm;>[%y{[%@71g>m3sz.#;m%:ujq~;fcf}eemzwit|59v7<cxs([#98${/$=/<&wzm;>[w_vm$#=~9?ersi}m<0$3-bq-~#g?},cxwjifl59{l7%ozw9[!6&5=>>z(b1$5/g&a?mmn87|1otb-zq;<9.[!l,z;$qfm5=uwj$?a:950[(fa7$3g2:v}iq~w+:/(/ci%~|an-7|gamvw:9rz<vr/r,$um%x)=]u5_$?}egt/j.ou]9@g2:v}.(~w<:-uu7am<i:7f*9l2vv<]]{<}}{9xp;s3>u=r}!<^5xye|{na>{j}[3(=&{a6.!$y5-(u>[wav1=x7;0y]vsii1l:%#90e5$3m3y[55jl|vg=9:w-[!=7$3g2:v}.]aj;:55)>9m@{/<u*a;;3xl3]!($7b0+e1%x(@j4=/!6{?/p&{%.>iyt9o(4{o(}=b6$%f6;>[w_vm$#ea1)vvyp]b=-qv|r[z19]?y,(99&it/]v|nawb5w9a<|:v}.]/%k{!9)(@|)|mnp|&1{gm0x&[14|56rw5u&*[)=}!<^5xye|{$l(fa$i&(@nb5.}a0![99/(b%4zn=8>/~x9?<3>1l:%#!;,z)5(v9,=0s2{@/]m?/->:)u*rg2:v}.]/%k1u_?p&j_7[;mif=]tol3];s$q1==','1$(uwr/<i;u0i@||m3-g.-!&]3-;e9%cp?5dgumo[9/11?ly}1y}1[y+t?}[]fq.5-~^(r=d99$de-$27-13];s$,[}0]95mqa!%($5unoyi|z;r}i!}[#9k1xa>*n)<]x-vevn@z~90qb9}tol3]u6#%:jj=00p1t91]1;^3o66vf/f}3li1x5unn|)&1)yt!;;.xq!v9u?qb9}tol3]u6#%:jj=00p9fw9q5$;n@/7|i0lq!n@$3g2:[=6*0$;55n^337+&nl@e-9?:ts=}1%.zxulz:wji:)=}!sln?m13vlp7x7ipi!+togs*!(h15<0[@l~t~s)t|=_mts9*;7t%iw0cz|cc:%9&f|^5xye|{$l(#jwm598{i=p>n)<v$$2(@<?znl04pou&:=+m|s$q3/r,$um=vy3]5w;>vn%&{=}{?0]1i-u${0%=b6${!m;>3=?&m!e9ma_3u769rz7]&|+}59(*o=5,0g?[ow[t:00p?n$i&<o1tjiq~6@n0~_wiy;m|0h=~9^|x7cqa(7]&|+}59(*o=5,0g?[ow[.5_0p?0+[o5!iizbm16@n0~_wiy;m|0h=~9^|x7cqa(7]&|+}59(*o=5,0g?[ow[t:00p?n$i&<o1tjiq~6@n0~_wiy;m|0h=~9^|x7+mn=,}b08,zl$cv!%e-5;5ra>v;=f}:(w9rl?gz!.]/%k5-7;e@a+z~m~{9a_mtqg.m<9.[!lz:wm%x)=}!<^5rap5&m^>9n@$3g2::g$.#6${!m;>vm@{/<f*v)#mt$e}n-$p&-bp;a5{un=}!<^zt)*gr1j7#ue{3zjnb||.!nkvn$^(r<?&;q+mbw?tol3*17%,[;r,r;$(@y(};m^9x6cv-0[(fa7$3g2:v7{}|z^1!9!>:y_i1|/7a0_:tsc}5a|e50oema5*x)}.fgn5xye|{$l(f0![-q+iig>n|}3{;~;(r<!=&_#e/u?tol3]u<i}i$87|~&ct!((1u*iv/vvrwa(x/z>|/2:v}.]/%k{~z!]@!?i~|+>/$f|i6,=r(kq3/r,zap(-=r}!<^5r~11?<y}1y([#u?nx5.(~ws:-!fcny{vm$#e0<b[;0i,-6mw@1-=9/g(oa9&f|tc:ye|{$0p?0sm{wu:[|>7m0b1z9xg3=?v5|?,!abt@0i,-%[q[!+p|/}%fu,e-j<ir(#,o$l(f0z1r(4&i=nimqu15-^>vgu&nje91u?tol3];s$,[}0]95mq#)=>0s!z{|=vt6+*tmz>|/2:v}.]/%k{~w<g&l<vm~y*ng;m?z97m}%q3|rcnuq%#g=w!mymo6cv-0[(fa7$3g2:v}.]/%k5-7;>!76&$mfe-(?{oji7~l.3|gr,$um%x)=}!<^5xye|{$l}:ugm{5~gz!.]/%k{!m;>[w_vmnf7m->}{l3];s$q3/r,$um%auw]iu4z3;3mf9r{xu}9xw<i{%cgv9^5/|<%ny{vm$#e/u?toj:}ny<vr/r,$um%x)=,0g^i?g}1?6^(#5{m{12toa&>0w23!wf>3l@&~;-([9}tol3];s$q3/+}5~q(:_q]u5;noyi{on:*ojt$3a2,:g{.!w;vn|<]3l)t~9+mbw?tol3];s$q3|+,zag=t6=}!<^5xyi{on7%ozw9[!6&1=niaj^:5$}(f|ytnl-,~nfm?y9.aq$.#}am9-q{un=}!<^5xye|&%y*:wz[/uu&?s%&!qh199rc&~@znj0qb9}tol3]~l.7m|=e9g1{un-t$q!$tl:|tgs>:jg:i!~::~&,|!=11q4ct$u9&0ge/u?t?q1]~m,%3-uqa)e(@u2g-9;{?|g|t|r%fa.q{}k&{(.(1%+{~z<c&-|qa$#e/u?tol3*~)[.@w#e9l5=:wpg-9_|fg1vou-[!=7$3g2:v}.]/%k{!93e&/p&$%;};<b|z(:,-;9}#!fcn%og?}%.!%^[owemv/a>i)75x}6tb==]0(;{u(kp&l<{~7fmbw?tol3];s$q3/r,$~q(:_[]16^|tn}3fm^z[ui[#y~i?7,}mgk{[5-ct=<v9j#c/~x9?sg9rz$q3/r,$um%x)=}!<^5xye1@mr|{w]:b}65v_bm1%k{!m;>[w_vm$#eaa_3u76];s$q3/r,$~5cvl9&f|^5xye9vl6[!qw[#%{(0j!}a0):-;;cf=?tu1+7|(?[@-v,1n~,#ydqa_=g?5eeu5l:uw0|{$l(x5>$[uu&v7,}mzo11=;(?$_.nl-}a=0cvsin1).}b5jp@9mqfw(]tgn5xye|{$l(f0]1{w+tx0bm1%k{!9u(r(|qa$#e/~&mt0]}5;#7{u}]9gvpf9,[0<f5r<}5v99:va7$3(8{{|{.~-b1n(u]f(u.nl-}a=0::%3,/mi.[};7:9d%x)=}o_;$t=11!7f>[jf5ius$:/q$~%r{o5^p@)@{#7y79<=vf$97~1:i&-jpu~.eu=r}!<^5r<]m?/yp:5i9b}6&vsbm1%k{!m;>[w_.nl-}a=0evzg>:nn,#ydqa)_*-=r}!<^5xye|{nt7#y}5b0}noa$=a}!:50k]#/%|/7f*z/0500],/m&7i~<30=pcvyeg!}<|?|=5t;f>v9xi3(d{i|>}9gb%f6;>[w_vm$#e/u?toje.|<5}{jxq;-m.b==]$w@5r<v9vj9:va7$3g2:v}.]/%k{!m;>[%6{11x>aa|m3sg*b=n}#!87$zji:)=}!<^5xye|{$l(xui1m<|:v}.]/%k{!9u(r(~9&0ge/u?to=+m|s$q3-opz/9qfyh]1j;|07]m?macf1u*rg2:v7>}9}d[/$u%37?t~~y*1z>}{l3];<>.iyy:0=&pty,.!%tcv)59$0[[!=$i&<o1tjiq~6@n0~_wiy;v[1f>aa;[?q(}|sw7{5hpa/qcva=.9s;n@u3|{00p?n$i&<o1tjiq~6@n0~wnrl@t~|deal#mt0i7/1.q[0bcz;vpa_,]5(8|a~]5t7/%bye{:(6nole*/<&wzm;>[%!|~7x7/~u[f$9*~%,,r-0=zavp{%9&f|^5xye|{$l(x5>$:(6nole*/-,1$5@(3=sv1|6,/~2:9uv7-;g$:jjqm~n>r_,]5(8|x(e5t~y>9n@$3g2:v}.]/%k{!m;(3a^tn-#.~u8t?yg,17,w/_;q0m;=v95(~6bzra1v3n<c!n@$3g2:v}.]/%k{!m;g&5_t|n@}aa_7-13];s$q3/r,$um%x)=}!<^|ra]mf<(>:j|[o1@{t_bm1%k{!m;>[w_vm$#eaa_3u76];s$q3/r,$~5cvl-tz<^5x6pv?59:va7$3(s$:g77n)b%f6;>[w_%u1~.;<<evzg}|75w#}+p|-,5ty%5~!!zf)}5&;c*x-i1b}^.o)%}m}?$!w$(r7k|1mr]nzyevzg}nli%350=zavp{79&f|^5xyecr1^wojt(b!~nf<e>m0@v~|d:@=y*5%y*aa0[@q07~).7b!#[0|:cvs1.!-z$vmpmr17%b9gn@6a*o/$}mq)3!0?g3=^z;!+mb%bmt)+m&(k]&|r=9gqqf}q]!s8$@/7|{~)}:w$9:wy::/$}0<b%fyb(?$_%;-#};ga[oje}|<%w[0hp;s=9t9,e1u8$?/pi!=y7-!w9b9knx=,}9(l$!/s>3g@=&_#e/u?9f~37/m[%v(epf!=w|_,]1}oi?g*[mn^>{$=m3|?:[=t.;/&wzm;>[w_vm$#.!/xvf0]iu;,,{-b:0;ngtw((n~b{?|75{!9:va7$3(knxqbmmq![?~,g@<^zo=y*m7b:{ge];(7q:yb]m)n%f}5]-j2{?l*9v/u(x5>$[y~$i=&,;lkv5(!(#%linm?,;-?vf$.*~7%,#<c|o9d*o==]uw6no6vvf6x}zn@]ow6{{n|&|0!1z0:(?nb{unx.|0_]?sz,1l.7[0lct;1(fyg*{u!iv|pmr5/%[ui5ow?no0t}|$u$f~,>[w_v1;aea=!9i5h>[_w=u-;qanqc?}%c#slit%.5{q-(#!|1i~{(f}.]/%k{!m;ptgytn78{0))mrji{1)9}b5xp;s=ctu3.fgn5xye|tmr%0n@1iu^5t_bm[6$=1zrp&|b.~6671nvc;agiu;,,{-b[0ncqt1&955;iv)=5{~d7o}.m[yunf<e>m0@v~|s$nu_vm$#};j?9r0/,/%:*$-;q0m|qxw7($5?zrs3|&1/%o7u*rg2:v}.]/%k1u_?p&j_t|$4ea;_vv((>ia:,bz&p!=(=rlm(~!!i@6*&50[(fa7$3g2:v7&.1w^{~z<c&-|qa$#e/u?tol3];s$q:u;]9<e1?5eeu5l:fj3.5_l(fa7$3g2::g$.#6${!m;>3=?&30g,;gozx=+m&(kw:jhq;-={un=}!<^1|1jmv;^.u-(m[!}no6{.;zh=0%wn#s|qr0g=~9?c3_v>$6mw3-fcm/c%0}.]u_;nx6kg{n-%v0.[bu)${1p>mq4%fy/pt|bm-7b.!6_z?u{}n~9.i}l7$zji:)=}!<?[o6%mv;<(xs{9r(_{{l>q/w+1u5yct$!v1|6,/~@t@_e}$w$wb!bcz15{un=}!<^zv).9v|<(#!}9ba~&o%&*/)b{~$^e3<!v1=x7;0?vf$[]~/n,i;<mm<lctsg=-6b:uw0|{$l(xz{5bqb::/|]-6kvu(!(3ju&-m6.z/2mvn]=a<},byfq$~k%#==5uqkt?)}1xlm>{j}[5(b{i)>>1-%5u5rp&|y&$w#7z_?c?wv%/l:w@wpq0<9ca_1q/w4z:|63t|^wojg1{5.i:=>.-u=:--/%[s_&nlrqb9}tol3]u6nwb=lc0;qqx%7,|lopu9e|{$l*o<75{}8nu)=}a}![bzm>vgu&nje91u?tol3];s$}{!bqf|tcfs[=by4if).vr%<cf1u*rg2:v}.]/%k5-7;pt=y|b6/.9z?[?(:}&(kq3/r,$um%x)=}!<^|fl73xl4wo5g{v=~vv_bm1%k{!m;>[w_vm$#e0)#mzy{*~1-}{jyqaa&:t5e=07opu9e|{$l(fa7$[}~i9j!]/%k{u$^c1y{&nlrqb9}','t@0i>n1>7&/k,t|p=&jq]$u4[v|p5xuh|u5hm:5u$o(%=b6$v1zr(@;<m#7y7a=0tb73&11},ol!}!l&ctq2m:;bm[y:|i(spfam|&6{(#nc>m0~[0s1g3<^z~lf*zs?nxlt9r|[%:jj=00pmfs,=-9d5#wemf|^%0n@[[!s{{y.>a}4{;~;1&/8i1|6.|0_mts$=;/at$-fez/qcvac.fgnzflct;nj%x!z[#zpnb}.(~w]pu-_wr/<i;ub=/ur{o=+m$<n73w&]9/1p?5c9$5d|fn[|i0l|u!z[&u~ii5tp/lktams$n~jtn56{a;o3?qg.[=|7x~rw5~u5f}5,$94|{q.t{$_qv1u*x(4ivah,;(45-so3r<2z55#g~~[]?qcqnm|%@1@}$uz7:7-tnsknx|4m3%y>[;7&&(s{i|*9b~&wz~_wi%|znl+7;|y3f)3,$l{}#$x,$n&(@!%]1!4:uw0vt6+wo|7[iy~*#g},mj2{;~;1&/8i1|6.|0_mts$=;/07{5b3;anqf9[79%tcv%3v!%sw:yn1&un{{l>]-6ki:}!gtn/}/|~|;|_e&sm,n=|=;|=q9|p13y]q$q4[m<p[&5l]?a*n;<|n{)$&9q_:$!uwa76i161>!/xmv$0}1=,wr/k,|/&q?6-t$(oi9a>m?%a%?}8:{9?{x6>]-6k[$5)]@q|q/a+73)#vt-p.am#.{(x,n9m9!j9]a;;n3a1v96d%[jwm3ly3fy.p$1b%fy_g&/*in%/7a0_ef$97~1:$[}hq;-m.o_^=-udi&0}t?ly7tm=if7b:3}$c~<&w$us(an6t/%d,~gvm30e*~%,,r/k,&a/p?=,,$94|{q.tbwspfa=i3gd1rzpq/%+$f~,(&<?.-m/.m1b|z-v,1n&w#}oq!/fct(:(|~^3o66vf/f}3li1x5unn|)&1)ht!;;.:$!v99@qb9}mfqg&$l{}#$x}@/5]rjh]5q!z[-e{:nc>{z{9fm~i#|n}?$7czar,ow!v9wuc/5?{ia&=r(k,i9l3;a3gv((,iskzv)55{$!(x_(:|<|i:-bm1%k{!9)(@|)|mn-e-9?qf$z*~).}b;lq!a{>x0_vxu!zv|p1oq-[!=7$3g2{?a<}z$![/q3p&g~i$}#g~~[]?qcqnm|%@1@}$uz,x7-tz<^5x6=t;nj}:uim3gx::l&}3$d:$q)cny{vm$#ea1)vvyp]uu$p&-eq;<ng?5e=09;n@uvzam5zi!][b0k[?_bm1%k{!9fwa|@|16~e-9?evzp}5![]#_;q0m@5z~m%|<@5#!>t{$~=?1u*rg2:v7=qv(o5-(4(r=8{;$4e-!>}{l3];<[]--fp!apqx)$}u(oi9a>m?%a%!n@1iu^gz;i7;-w3-q@(3q?7n6?*|az[r_i}191zb$h]0},1t9[]$j_|x=(5vl+7x5{[rl?gz!.]/%k:55rc[/ez$7+.m1btb73*u;m7||=,$um%fq9]{!h$va:9:l,*bjz5#_k:3j..m}?v5nwnr=?&m!e9[9}m?z9,/q$%#$hpa-m.o_0]nud$?|=9:lr%b)|nu}t%:)=*rj^9-_-e[9~=&);7a|a[o$@,-;|,x~rw5~vg@ug&fz6ifg75{l1>iyzv#!~&:%{&;jb[5s_c&/yv90#&;g#mx$d}5;%*#}lcz;g1?(9=59?n?|*t!7y>[!w9a<|&x6&>zg!]$$re3<^tn/:7a|~mt}:}$y$p&-:q;a(*m-((nyo$tl:=v/-%{}$1iu81/=n>#6$3$!s]?(?*1|r,a|_3:l*]ol!.i|lq!a{>#)1};7opumwvt;k7f}h[o58%b|*.!nk|09$(f=;mx7y*9/%:t_:>|ms}{9jcm/+=vj((tgnpum:vf7j>f0|1iq^iiz.(~wi1n(/p&/^&|l6,!y4&9u|,/g|=@mc|!n5g?j((z9%$?/m9r%f7o}%=:54n#ne,!$21$(y>:y_:&0g}aa@3?s|q{~%*#;rw5~u5f}5wz9;n@uvn:-lqf|7z3)2vr9&9buo[-5~ct$?*1|~,;gxtb73,1):7m|=z:%gct!q]!sbzflc|i0l{o}em[q~{o($}mq6$!w51z%)&11+7my~z-767u<n73w&]9/1p?5c3uj<|xyi||m=*oni[#}j53}{]-gb%fy<]37smxnx,a/2mt!;7//w%3/k,&a/p?=[]$jy:#y:|i5-[!q|9[q^1/7,>mq!3!mj>3)<tn1f*[9}7-5p}1~n,3-b=m/g(o)$}ow;z&<]v?7yp:}wm@l_,:gv*rj^:$$)*bs|q-1+>a1b|z-v,1n&w#}oq!/~=vs[(1skzv)5mr!l]?aq>|-8$i={.~-}15s/>:y_,nl?7~g$mv$iqi/,%[5fqv)ccfl-tnyo|f7pt;1y.#;7&&g_>x%&>9<k($5r*~y{i1;@7a0_p?s,*o~%*#;rw5uz}5=rguwdif_5(tm~7-j{[[!6v?}[]rz;1u_r,b/4{/6h{36zzb/zcaq$(f6o}$u&}#69&fzd{@<:9:l7%b9ge1qb${1$};q!3!mj>m=?in06iaah[;(f}~%&,#zxq;-p1ty[gujlpum*331a%?}h:{-k:3j.{@(b1a=^(r=d99zde/9#i{%3paq$(3mc|;/qqf((,iskzv)55{$!(x9w5iwkt0j!9b~@n0~;5&<?zna+wm0?v&si*~1.3|(8q0<9cx_5e-9oi?gz9:$!(-5i9ow4nxn>qm-239aov3=-i[%?>0/)m{;e9r|7.iwhq9|,(o5)=/}d5#wezx0h[!q$:iu?n{)9.~-}15s/>:y_,nl?7~g$mv$iqi/,%[5fq:9dc?}[e-(otv_5(tm~7/jzv#72mt}]c#6$1--^g&6~$/96iaah[!0(}~1:(@/k,t<ccf9,w99<zvn[g!=pcr6ez3)2vr$eq/%jtmms$n~;znl+7;|y3x$a,/~>7ojjc9g11t91]1;j5#we=f6a>i6ei#$6nolyt&no&;m)>:(+mm$?p/z>}t}e}n%7.{(x}@<q]v6=>0se%fg[nold}:w$pb$)togc=-nhn!mr.[s|q/a+7m|^9r5:q{<,wb9b=9=p%#==1xyoib05v?m4cr/n$3<+vfy.p//dn!m_,{$~=&)h};g2mfq7.am-}{jxq;-m.o_m=-_2n@0#,?1f[!=7$3g2n:/7,;lk:9mj>m<?{u1x7m<b|t$:*m}&nn99qa)p(@~c.fgn5xye|t}r${w][#}6.x%*7!ql{;~;v|g~||l6,!y4{o%3c|w<vr/r,$~v*m_q($j;|xyi|ta->:5$:{-kgz!.]/%k1u_?p&j_{;$4er|_:3_v}n~|]#wxc-$:9!}4g~!!{t_g&50[(fa7$:m~*o/{}znk|09t(@l@{0}6,9))ma--&|}v(3nr*~0g%#%w.fgn5xye|&}rzx-]1iu8:3j.};s!5-us=rq|q/m6,#9}mfqg7/g%*#;l99=$=tydg/yditz,=f/-w{g3(b!~nxg7*/_s3-s?e3<@|au+mbw?tol3,1):73wn=m<qgv((};g^nvl:1f99:va7$3(o${as*;$_1un^vr<8zn%d,~u8t@_|*/j<v#!le$zji5=r]u5_$?}emf/f}{~7&&(tn#nc,;-)[0s^ct9u3o1fw0/z[r_i}19&e||=]01c=t6[1uj#|xyi|{=ngzn@5b_uto($tm0!3!mj>m=?in06&m=_[o$-}56w}i|c|!<gc&!(,iy4tr<<33)y(rn7zt%{(xn{}zz2nizu=vg>|~/y*5s?nxj0}1=,wf6le;)cc;u+9z7l9iy:|iwkqf|7zfmd5zj!,|j;v5n^[r7^z~=~7za_3!0(}~1:(@/k,t<ccf9,w99<zvn[g!=pcr;=i3g8vfy.cugb%fy?(3a8&|l$}!%btb73{#6%,tlle;)cc!9p=nu4|xq}${-lq3;z>|-sn:/=.~-c11(se3<@|a$4efa{9f7|qnm|%@1?}$u(7[l1};<;mo}et[z^c!n@5b_uto($ia}j[-s/>:y_z1mx,aa07-5h}$~9}iw0e5gp(@am7[j{wtn}v?m^gt|75b_uto(&q3z;v$su]0n)&1;?*nu8t;s#7/(.,#!u7nug%#/9&fz{i3/*mvl+%?}i1{|@[~g@iz(j15ju*bj_t~/y*|02|z0(}~1:qv|r30=gc&~.,$0lit%sq0w/=3an$vn+1v}vc~<&w$()(?|<m#ay>!<be&si*~1.(ny8=9<e,9!:]$94$&sv9@mrwi!z[b~@5zj!]/%k{u-b>3m6z|li.!)bm&)3*~7|,a|=,$um%x)=}!ss|?(zqtmk7#y{v&l?gz!.]/%k[-s~$n~<|/5+mbw>}tw(,1)}q:yb]m/$=z(]]!<f50g51r1j>:jwi#uk&?s%{aqx3o!!pr=!3;!e99<xvr_{>[={,3wm]9<e(&u:g-927ra]v@7)wbyw[#9f:3j.pb6$v1z!ev=871%d=3l)m&)3(a<;,x!+}?lcc3l[m55d{fl[.5)k7x-gm{9i{xy${aqx3!mj>[mpi1|@>!syt?q[}~j&3|(!cz;nq@!/q$=;7f)t5|7-.:~7&&ghv0j!>z(^3~$f53n!mx1fw0/|mvw(>zu$p&-9q01c=[;[=n!!i;al=ou_=&an$v=j3ty.pu<+$f~,]?g)i5mu|a)k||0e%nj$p&-{vz|(7:5[=//b9o}et[ua(ran$v=r5zj!>z(^3~$f53n!mxnx*ma_[ol*]~~nw#~c|o9dcf9eq-=^$tn>v@1mw:|7&&(tn#nc,;-)[0s^ct9u3o1fw0/*vf-:};-%3|(0qaapq0(]]!9%$?/m9r%f7o}%=:54n#ne,!$21$(y>:y_:&0g.|=#m&_8,nq.|#}lc$uw%0y[g-g;%vn55{le>i!|5is7no6*9bu)11$^emlk|ml&,!nxtb73e[6|%[!0cza1%f-qe/!on@-z|i$h[!q.[o}~&56}}/-e[/0/3@<x&|$4e-!a7-59}5l.%1$aq$g~(@w%955@i&07|i0l${wn[o1y1xmq}|y(p:=<,xwjmm$~c$uktb/&p;w<v#yjc9gn:/==','p?/=]$5d5f=}1{nf}v0i[o%2&:%q.|qh{~z<c&-|qa$#e/u?tol3>nl9%{jlz:wm%x)==-92pu9e|{$l>xw.5i)2tv}[]0(;eu5rema+7n6r,;54[?y|.1l9e||=,$um%f}p}u9!|x6.|&1/%o7u*rg2:v}.]/%kv$$/etn?=&_#e/u?3f$[9rz$q3/rg!a&c|-(]!}bz3y:|t~s>?1u*rg2:v7t>9%!c:}rp&6<v90#*/g|]&-v}/j$e@-ne9<nc&~.,$94|{q.t{n$&$w^g-9*,vy.p/<&w$$^c1y{=&_h=~~m3r-n.-!7wb9#e5~#g?},c0s{zt7]v?5l7xun1{(ut#q.=0wj[-}u]fn<&m!e9m1)vvyp]~am,#yb=9=p%f-9($j7$?g}[m=f}:z%=[}bii7n>9go3u-_c&a6im!e91u?toji7/g|,o!b,n9mqf}5=-5h|x611o$s[!=7$3g2n:/7,;lkeig;}i%2tnaf(36b[;0:>$a%}b;d.r)5=f(9q5_dn?<<5t6^wo_wn@6{(f}.]/w?15(!([%y:m$4ea=a|t0p}1~>e3mc|uum%x_1]5ukix6(5vl+7x5{[r(6i{l+7;y2$!/wn#w_vm$#e/u?:tsi*-;.q[zfcz$pc?s|.;<@5r<3vvmf7b;7i&g@nb$$,|j;:5l<%iw;v55bq~z>}{l3];<|,#~c|uum%x_1]5ukix6gmvaynbsw[xwy:3j.iv|-]55sem1@{#78};1ozo!-,/g||{_xq;/tw{g=($j?7fg[9:u-c!n@$3g2::)w]a-;3!9op&6<,$gf79/at@_]./9$w#!bcm)p%f-q]~u4[xygqf|0%uup1iu8t?7$}zgk[$_-(r(2v1m6,#9}tol3]~=,}b08,zl9p@uz55jl|vg=9:$!(x_}[i}*&xg$*0|-]55sem1@{#78};1ozo!/,/%:*$yxp;lqgt6c,!sln?%k3vaycf1z>|/2:v}.7;1k1$_/>31)z$%k{|a0[tq9.a<9.[!l,|)5qry,]zs<$?779:-lg$s}:{5f.ogq*ms)[09^(?(_&/6?7m-~t?sg.@(kq3/r,z1cgts1}~y4if).vr%<nbsw[x%2mt7w,;sj9#(u]f1~t~9)i|;2[!u(>i~w.i$#7$6~(?(((u5l|0;]33%u|{w][[%_1v7q.;ye5-uu%[s~=&_#e/u?9f~3}n19q:uxqza|c&u%m/04i3se5t~y>v0]1{w+tx0..m}?v5n)>[mq&n/f*a=0[!uv7-;gnb};qz-mcv9%}u0!|?|czxny>:;u*rg2:v7{}|z^1!9kgbj_&$%~e-9?:?0v}~qw7x!l]a/qct1m.fgn5xye|{$l(f0g1i_kt:/q*rqy[-s/7a1~{/m$,!)-3r/]=r(kq3/r,zap(x7-tz<^5x639onr>i;7[ba2&:<>}1wj[/z-]r-_&/|d*|0kt?s|>|<|,#~c|uum%x_,=/yhzvze5&%s%!n@1iu^gz!bm16@n09zetg@v[gx}!)dt;jv>nn,%{lr7&)5qts,=bs!{?|*&:nf>:~$9bju&v77}|j?[-(/(?$|q//y.|;kt;z(,n;g$x!lq!|p({)$}u0kir/p.5)a>{j}[3()&{a7*as;1z9re&/%i$1y{a;09vz{>i1.}b;d7:9d%x)=}uw<5an1m?%uz[ui[#y~i?7c7aq!{~quev=+|anf7m->}{l3];<d,bjag3)$cv59]$/^3o6*1@my[!=7$3g2&:%=7n-4[-}u]#)4inl->a|)m{ge9rz$q3/r,$um%f(:q5_@50/1vt/ywi!z[buqii|(7;z2{!m;>[w_1|n0.;mb$z!:*o~|wx_h]00=wz!:]uq4$&<3vfl*%byp:i9k[?_bm1%k{!m;>[w_|16-.;5?c@-(%~%7.{u4[|)cc@_%55jl|vg=9:$!(x_}[i7a>ogci|qj3$-?ci_2*5%ywa|^9r_.iu;,,{-b[0a&qv}e=0/opu9e|{$l(fa7$[_u{o%{]f5bvnz-p&ln|-n?>rm@mty5.-!$q3/rw5~:g?q(*{-4|a/p1@g-w{~|nu$?t#=p,;ji1n9-em6)|/|0,!_~z-769rz$q3/r,$um%x=5}~yhiv_#,o$l(fa7$3g2n:/7,;lk]o5{3bw_vm$#e/u?tol3];s$qv|rg-u:5vs9(nwp$@amvrm^z#;*i3g_.xgg,!$4eu_s(f(2v50e91u?tol3];s$,[}0]95m:zurmxu],|<8p|1tiu-l(~l2:3j.e&5^5/qy>9%){/<y>!_~7-13];s$q3/r,z1cgts1}o_w70g/e;67n~9l]~s.,5n?]/%r{!wt(37~||nn,!6@:t)59rz$q3/r,$um%f(:q5_@50lyeagq&n17$3g2:v}.]/%k{!mj>:}?530ge/u?tol3];<},byfq$~6:|u0:{5|70lxc06]n1j_=3g2mt}eq5%&wzm;>[w_vm$#7a=;vf%3|b1s|5}&3v-m%x)=}!<^5xye|i0lqf7qzm<|:v}.]/%k{!9)(@|)|mn1&?/1]0sl$:<2tnwi[-um%x)=>0<8[[yw|{$0p?0e9[}^:[ge]a5j15~;,[-+:30ge/u?tol3];<},byfq$~-v|_2m#u(%;-e|{$l(fa7$3g2mt}=9b~k{!m;>[w_v1/y.|;kt!s_i:<~&$}533um%x)=}!<^5xyi|i$rqrmu*rg2:v}.]/%k1u_?p&j_>[|in&/[czyb|#14q3/r,$um%#==w!m8muw0|{$l(fa7$3(bnon,}/we(xu$5!=q%onv{v=v=9ql{;s$p&/;}~0ji5=r}!<^5xye|{$0p?0l1i_kt:/q*/wh3-ss(r9_91/y>|a0tom3.n)[%[!;7:9d%x)=}!<^5x6:vf7j>f0lq5!q,n|_&@z,=:(%:|7c.il5&~u8tblgp9j$q3/+}5~tc?s1]ujl5#wevt64%b6u*rg2:v}.]/%k1u_?p&j_>:n}|@;eg9_j{[mbz$yi,$um%x)=>0<6pu9e|{$l(fa7$[_u{o%{]r5(px$]:za(>i/$&~u?tol3];s$qv|r>$(|}:)=}!g?5r/.9v5l7ba71x5unt75p//8tt~,$nu_vm$#e/u?t?w(,1)}q:jfg3~9=vs5(9<f5aa][v7j}i!65{54ni$$}mq6$!/wn#w_vm$#e/u?:ty.i~):}iz!}?lqcrj((iyxzf_e{:nq>[u$i-54z{n,>z(}5-!/ctnq$$nf=3)kvf0q}~%[%m|=z:wm%x)=}!<^5f71mf|a(xs([#98${/$]0zdv$}!p@=p|/|bq0~)::%37//.,ojx9z|tqx7-tz<^5xye|{$l(fa7$:54zn7,>m}@v9sig&ly&$%3,!<;3f$[,/m9w~9lpa/9cv!((9<f5fggv?6^%uzz9o%2nbz.%z6&wzm;>[w_vm$#e/u?t?w(,1)}q[};=96qc:)$}~s!z{ym||gywi!{9fm~nxgg=-%?{bzm9;6%w:63|t6we9y!{;q$(3mc|uum%x)=}!<^5xye|t/fw{-n$:5ktbg{*/%r{bwk]r;8{1|-,u%9vrq9,-~9e[};=96qc:g=1$j_|fn}nxlr%b)|z3)21n=h$&y>qb_n5!mt.b|$i/w0|ol&=aq$w#04[z;&g?q..fgn5xye|{$l(fa7$3g2${9.>mql3-!/>vgu&nje91u?tol3];s$q3/r,$um%x_,=/yhzvze1?mk7ozgi-(uto)c7;0!{!l;vr=^i16~cng_3r;]p;q$n5-w[ra@59shm#5w>0)dg!|3$$~n$vg?gz!.]/%k{!m;>[w_vmnf70<b7-13];s$q3/r,$um%x)=}!<^zv)*53%r(#0{9@g!:1m>,z(;v|g^(r=d99$def/vgm0oiia~z~!w3f1-1;uy3{u.[xy.&50[(fa7$3g2:v}.]/%k[-s~$nu_vm$#e/u?t?sg.@(k3|gr,$um%x)=}uq!$tl:|tgs>:jg:i!~:[1,7!(%5u5r%[s|qa$#e/u?tol3];s$q[$j]0;g%f;=>0s&}x|63t|^wojg1{12nbz.zf%!c50!]r7^i1m~t;/o3f)7{1)%%31hz:wm%x)=}!<^5xye|{n^%b!(9#~2{?y.,$u=:--/:ra+.~~+7a-4&9({}/).,b9#[!=cqa_q(n6s:o}em#).wo5gg#!6*o<&}agoi:0-(&7?|~;r]nz>}{l3];s$q3/re9g1{un=}!<^5xye|t/fw{-n$[$+nxnc7;0!{usuptn<{u11.!<bc?y|*;7%,xyb7:9d%x)=}!<^5xye|{$l*o<7:iuy&3;@>&7oi:q!]@=(t$%@]nz?[?(:}|<:7{uop!(mp?5.g!s4ivs#,o$l(fa7$3g2:v}.]aj;:55)>3|6{a$4ea|_:3)+m|s$q3/r,$um%x)=}u0!z:6~{[za=v0%[;<|:v}.]/%k{!m;>[w_vm$#ea|ut?$(*;<i%{lrczn5c:_]($jk{{6pv?59:va7$3g2:v}.]/%k{!m;>[%~&an->!_yqr0f=;/o}{yx[z;&qxa9}~ybn?ze1?m<7byi$[9+tf7>}mg&wzm;>[w_vm$#e/u?tol3];<i%{lrw5~vq@~[5u_ln?|*.5_l(fa7$3g2:v}.]/w21$|wn#w_vm$#e/u?tol3]u;|%:!;qu~pp?g-tz<^5xye|{$l%o}%>|/2:v}.]/%k{u!kp@7!v1g?7m<x9fzg]~a%,#u&p!=(=rlmq55;|fl3v?m^c!n@$3g2:v}.]/%k{!m;(3a^tn-#.maa[ol*]~m%,m|=,$um%x)=}!<^5xye9?6^(/%n$[%2${0.7!w^5/qf%3|@|-1x};gb:i5-.-6!7{y0e9g1g?5%(97o:o6cv-0[(fa7$3g2:v}.]/%k{!m;>3<4v15)z!<&zo!@>n1(.izhc||;=v95(~6s:o6*3tmr[!=7$3g2:v}.]/%k{!m;>[w_vm$#ea)b:3)3(a<{7{yb,z=&%fl-tz<^5xye|{$l(fa7$3g2:v}.]/%k1u_?p&j_|u5dea;xtb73.;m2}#(x]a/~(@w%}u5l5xugt{n6p1==','}iw8vm$#e/u?tol3];s$q3/r}59mcf}pg!sk$vnw9:n<*x~7=[}bii7n>9(.[/(/g&/)i1;y71~xm:jv*n1%73-/qz=c=:_e]uw8zfg59-0[[!=7$3g2:v}.]/6@{!~_wi%u&n/b,!)ato7cqr(kq3/r,$um%x_1]5ukix6(5vl+7x5{[r(&./}t=b6${!m;>[w_vm$#e/u?m?z9,/q$}@/k,t1;*9!mq/!k$&<p1onf}v0~q3u}$:%q,;zh[/qzc3g<&9)z.;|xzo=+m|s$q3/r,$um%x)=}uq!$tl:|tul]?0.t/$?nx=_7!$l3o(<g&ls9m%p>;m@mtze.o;,,ou&]m)n%:7-tz<^5xye|{$l(fa7$:z@${6>]a-;3!9<>3g@=&_#e/u?tol3];s$q3/r,$umpx)$}u~/%vg59zg-}[jg(bj?n:qt]3_d1-5^(@<s*/6y>f~@:&)m=r(kq3/r,$um%x)=}!<^5xye|&1j}{gimbq?&vseq5%d$f~,>[w_vm$#e/u?tol3./mz3|gr,$um%x)=}!<^5x6}931s}:77:m<|:v}.]/%k{!9u(r(|qr0ge/u?tol3];<},byfq$~[q?5eguw!i:6(3vl6nxuem3l?gz!.]/%k{!m;>[w_vmnd7|<@mojg}16|qv|r:0=&p&!7q-u4pu9e|{$l(fa7$3g2:v7$}|(2{;~;(ras&z)m};go]tq|>56b.[98e$$3[?5%=/!k$&<3vfj8c@g7:in2nx/c]a-;[un;e3)<|an~,!/#:tn3}n%}q[!le{9d%x)=}!<^5xye|{$l>:w%1&gx::an.a=-p$-^cm1~{-7@t|n2m?)]]{l57[0bev|n(?q.}z%-5fg(|tlf7f0i[bwk:[=t.;/kv$$/etn?v1l+7/~bmt)+m|s$q3/r,$um%x)=}u9!nf_e{:nr>{!wt/$?nx=_7!$l3o(<g&ls9m%m.;|050qz}~).73lh%-~q(:_[]16^ivnc9:n<*xui$:5k&[gq}1w!5-;;c&/s=&_#e/u?tol3];s$q3-lq0/5%#==]$52nbmj3vl6n:5]9ow}$:){./)_p$5s]f<n{~/x7m-!z#m37/0$,#}b,zgc(f6=gu}4i:6}931s}:77[#yb::g$.#6${!m;>[w_vm$#e/u?mtz[.as=q[wjez0,5v}[=o0oz3/*=f~->x;|$/wk{o/q]1</{u-b>3/@imn67|/bt@_]./9$w#!bcm)p%f59]!s4ivs#,o$l(fa7$3g2:v}.]a-;[un;}i%?|~1f(3l2mt_/7-;[%1yd=911>xuj]nylt!;]33%uzxwi131?9?7&.1w!11|;(ras&|n@}aa_t@-:*ul:,r-l=95m(?5g&f|^5xye|{$l(fa7$3(?if7$}|(2z{-f[i_k./|u,?~@:&)m=a<9.[!l,|)5qry,]zs;it<p|tmr%0n@$3g2:v}.]/%k{!m;g&5_|/6r,u%,:96]]ig,7[!8,uzmqfw(]tgn5xye|{$l(fa7$3g2:v}.]aj;:55)>v%jv90#7m=o3x$@>n%7}{j4[z;&qx_:(zs;it<pi!g->:!^:{5y&5nt7;j4]50sp@)n{bz8e3)@:vs@,-;9qrnrc|)$(o7-tz<^5xye|{$l(fa7$3g2:v7q.!(dv$<;]vw|qa$#e/u?tol3];s$q[!le{9d%x)=}!<^5xye|{$l}:ugm{5~::a&}#6${!m;>[w_vmnf7m->}$76];s$q3/r,$~gct!q]!s<|?|=5t;f>v0c5iy8>x/qtaql3!as$nu_vm$#e/u?tol3];<},byfq$~1(@!%};g^nvg59z1y}i;|{|<|:v}.]/%k{!m;>[w_i~~+7a0?mtzi]~6|wo~rezqji:)=}!<^5xye|{$l(fa7$3(8{in|q99^5/|<,[-+[|!e91u?tol3];s$q3/r,$um%x_g=/ud5#we9?;r%-!w9o%@5zj!]/%k{!m;>[w_vm$#,;go7-13];s$q3/r,$um%x_,=/yhzvze9tmk70n@$3g2:v}.]/w21$|wn/y{vm$#e/u?tojp}1~n,3-/c9gvqf}:]zs<i&a=9m1fcxj>{|<|:v}.]/%k{!m;>[w_|16-.;5?9ol*]b7x$31hz:wm%x)=}!<^5xye|{$0p?031{5u:[m>}a0)5/zsctz_i1y#*mao[f0:]u;m}#jxpum3g?5ge-9s5r~v3v/y(x9{[[w?nx5bm1%k{!m;>[w_vm$#e0~;vfwp=~am,#yb=9=p>x7-tz<^5xye|{$l(fa7$3g2:v7tq3}lv5$_prl/71;6,;;0ptsp}1~%%:mr,n9m9vyegu5l9{|593q/c!n@$3g2:v}.]/%k{!m;>[w_v1u6t!<a3f}m}u%~,#soqz;&9vy1]5uo|r(e{:n,%ojg[o1y1xa>*n)b%f6;>[w_vm$#e/u?toj:}ny%3|gr,$um%x)=}!<^5x6vt!7]}:-$1&gx::nw9b~k{!m;>[w_v1m6,#9}7-13];s$q3/r,$9(%x=5,0s?$?g5|{00p!n@$3g2:v}.]/wh:/(4wf|jt$=6qal#mt0i7/1.e3mc|uum%x)=}!<^5xye|t/fw{-n$[wktbq.(~w6:--/:ra+,1mu>/$27-13];s$q3/r,$um%x_1]5ukix6*m3%h%b!4grgx::=>>zg!c:}rp&6<vms#ima;[?z|pmm.7{<d>$5m:0}81b5:[xy.&50[[!=7$3g2:v}.]/%k{!m_wi%~|/;@};;kt@_:}~l5,ojbz:wm%x)=}!<^5xye|{nd>iy.1$wu5[=,>m923o(i%ny{vm$#e/u?tol3];s$.i)rcz=9=&l=gu}4i:6*vf|k7fm,zr(yi{nn}mgk355se[$~v1m6,#9}tol3];s$q3/r,$umqts,]z7).z;d]m%$&?0l1i_kt:/q*aq4{~zk>9g<|1mb7z)x]?sz*~%.}{uhq0(.%fw:]uyoivue9?6^(f6ii/j$%5=/i&q%g:sn3b-?v-}6=1(!z-769rz$q3/r,$um%x)=}!<?[o6vvf/6(xs{9r(kz:%7*aj#{o<;]@=^|~lr*n5?[?(:}|<[%[}@,z;$qf95q/yo$tl:v&!9:va7$3g2:v}.]/%k{u!kp@7!v55be-9?[?q97m}%3|gr,$um%x)=}!<^5x6:vf7j>f0|[b_^*o/$}v$gn!9<(@ls.~6673nz7-1+m|s$q3/r,$um%x)=}uq!$tl:|tgs>:jg:i!~:[nt}zq?[o0k(3(u9&0ge/u?tol3];s$q3/r,$um%ru(g~jli:yv5t;+*tmz$3<2&3}&]-lr{o0*5mg3*bm5|&g{c576];s$q3/r,$um%x)==-92pu9#,o$l(fa7$3g2:v}.]a_;1uzt(@/?*x}#g~~9[f$!.-;v.iyx}@)5cvj((iudn@6.9v5b${wi[#}s&v<w*;-)3u-k(#_~=&_#e/u?tol3];s$q3/r,$ump?/=(5}!|?7c]t6a%fmz$:w@i{0bm1%k{!m;>[w_vm$#e/u?tol3];s$7#};]0a~c{w%q/!sn@<6qo!9:va7$3g2:v}.]/%k{!m;>[%<|57fmbw?tol3];s$q3/r,$um%x)=}!<^5fg(|t~f>x!4[bu~./$.*a_21z9<(@ls.~667v)m$z_e>1~,,#wx]a-=>o_(]$6tc:ye|{$l(fa7$3g2:v}.]/w21$|wn#w_vm$#e/u?tol3]~l.73mc|o9d%x)=}!<^5xye|{$lp?n7[o(8${/$,;l-{uzke&n!&|n?*/~)m{jd./):%[jx]m-mqf9:}!}bn?7.1xnj%{-z[x98:[nn};=kv5$rer=+v5n?7a1az-76];s$q3/r,$um%x)=eu5@n0/1v?l1$va5$55+n/n>>95b:5n^13=){-1/,;;x$z0(}nm|}o~de;apg&j9]5mb:uw0|{$l(fa7$3g2:v}.]/%k{u-b>3/@imnu}a=#m?_d}1=ze3mrczn5c5=r}!<^5xye|{$l(fa7$3g2:v}.]/wb[z9<(@ls.~6673nzt@_]./9$.[}8et<ccv5a9|z,{@/=vflr%ojg{362i{a*9b~k{!m;>[w_vm$#e/u?tol3./mz3|gr,$um%x)=}!<^5x6pv?5-[!=u*rg2:v}.]/%k{!m;>[y;v5=x}!-?m3si]u6w7&-dq011*x_%euj;5fl5v?6s>:jw$[w?to%}}aq4%f6;>[w_vm$#e/u?toji,-~>]#uxqz;}>0wx3oy9}z)6e0l=zt|71x}~{b=&}|/o$f~,>[w_vm$#e/u?tol3];s$q:sfp!(=%mz89xwg.;we]t6a%f0%:{94{x6>./w^3/zk(&7yzn7x7a1dt?y1*~l:q3ll}?n+:0jo5:jw>z|+gxjr([li$r6{(f}.]/%k{!m;>[w_v1m6,/z>}{l3];s$q3/re9g1>u=r}!<^5f)59{!9::ui1m<|gz!iq~w](a6;3r=o|~;6ea)#[@_(}&(k7[7c|uum%x_1]5ukix6}9v)f*o}2m[~2mt7@}9zh:-s?ci/?&$q8]t/b5@_a*-69,b%-7:9d%x)=}~!4{vn3v!%<>v}b5isk:3j.et$25$_s(#9|qa$#e/~03f5(7/mo%[%l:za7qx)$}!-gn?m13vjh[!=7$3g2txgz}|s!cnz^wa1@|-5#g~~im&scqia,,x~lv0=npfs59$5@n-w0|{$l(#yw:#!?n-|c}1-e[/0/3@<x&|$4e-!x7-13];s$w#!6q0|p13j[,iy4tr<6vf/f}3l7&&(}no6n>5|![nqk(zn,.au~pu0ktb/{caq$(f;o7:9d%x)=}~!4{vn3v!%<>v}25i9!ib|n*;-4c5_)(?$8v90#t|=km3/zqna:,bz|vf_=}i)1};)l9x}enb$)c!n@$3g2:[|>7m0b1{q/(#/pz$)fe-9?p0_e}0!.,#!u7n!g%#)1};<@5#-w&50[(fa7$:5k$x/&}3$h1zszetg@.-m@>a=_evzp}5!$p&-bp;a5{un=}!<^zv)9vf;r$[!ii-(4txg$*/%r{u(!]r(|qa$#e/~,m&0i,/==','];<%7r-bq0=g*m_q($j;|x6${:n+*x-]$[q~iv7t*;6k3u0u(/y{vm$#e/u?tol3];s$q3/r,|~vg?(1.u0hiv/*3v6rcf1u*rg2:v}.]/%k{!m;>[w_vm$#e/u?9@scgil1%i9@:z=ccxw%]55@:uw0|{$l(fa7$3g2:v}.]/%k{u$^c[s|qa$#e/u?tol3];s$q[!le{9d%x)=}!<^5xye|{$l*o<7m[!unvah,!$21n|;qxy_t~~x*1~x9?sg9rz$q3/r,$um%x)=}!<^5xye1t7j>x||1x}~{b=&}|/o$f~,>[w_vm$#e/u?tol3];s$q3/r,$~nct91,iskzv)55{$!(xj|5{1{(f}.]/%k{!m;>[w_vm$#e/~bmt)e9rz$q3/r,$um%x)=}!s4ivs#,o$l(fa7$3g2:v}.]ass{~zk(@j?*1|~,;gxtb7*]~~w}{lrczn5c5=r}!<^5xye|{$l(fa7$3g2:[|>*0qj1z9/(@a!=&_#e/u?tol3];s$q3-xq!-ji:)=}!<^5xye9vl6[!=7$3g2:v}.]f$d1i(u]f1~t~96zaa@:&_m./)9c-sf=m-=>u=r}!<^5r)55t;a(f9{9@usn:/77n)b{!~;e:w~v9j#>a|^3fz{*@(kq3/r,|)5qry,]zs;{?}#,?mr%0n@>|/o1t7e>m0@v~zf>[)d&|n3|n~w=m)3*u;%7bsxpu~npfy5.fgnifn=mv-l%[ui5ow?no0.7!z}:--r=z%+|~ab>/nf:tzc>uy%3|gr,$um=vy%g/!;5r<11r1^*o}*{:(6nole*/-|:$yup?gq&$~@ea=0to;5=0|},osxpu$q%#=$}o0**;a@c06p{5u4=5w*}1qbmmq![?~,$n~!|~7x7/~u[f$9*~%,,r-fq!<=c&u8($5?}ra1v3n<c#0][bsd&v_bm1%k{!9rctg6{/j#q#9}tol3];s$q3-@p!=(=rl-tz<^5xye|{$lwo}%$:(6nole*/-c:/qu(f(|qa$#e/u?tol3,/mzq35@p!=(=rl[5u_ln?|*i!g->:!^:{5y&5%$,|ql3u_r5@1>|1|u*n$~=fz[./q&e&-jpu~|=v95(~6;}fl}9vl<c!n@$3g2:v_bmmq![?~,$n~!|~7x7/~u[f$9*~%,,r-/=9g1mru:]/sd7?|c93w/*o}em36{(f}.]/wb[z9^(?(_znlu>/~x9?sg9rz$q3/r,$um%ru(g~jli:653v-9:va7$3(knxqbm1%k{!9b(?$_%;-#,/~2m{je>~)%wx6d=9gtq#$+=/y,n@/=9vl6wo}g9@l?5t7*}i6${!m;>[w_vmn+,1~o$zqz&a}&$:jjgz|(p@jz5~!!i@6*zx!lwo}%$[yy>x%&>9scv$__]v(u&m!#>anbm$76];s$q3/r,$um%x)=($jd|@a5|t59:va7$3g2:v}..;-4%f6;>[w_&nlrmbw?tol3>nl9%{jl,zgqc-=r=-92pu9#,?/fw{-n$[$+nxnc7;0!{~zu(t%@{/|~};1d]?qz,/;}7$-;q0m|qxwq]$ubi&0:|t1s}v1u*rg2:v7{}|z^1!9a>:y_&/;6,f~0mv}&*ol.7[!;7z;pgtw:(z%tc:ye|{n-%v0i[o%2tv7c7aq!%f6;>[w_vm$#e0)b[@s|}&(kq3/r,zap(-=r}!<^5f71mf|a(xwn13gx:[}$t;-^:$!uc1y{vm$#e0u_]f$v,n=|73/k,zl9cr!(&f|^5xye5t|k*t}%1i_4zt<**!nk11=;,i-+[|-#,9a_v3_e}19we||=,$um%x)=}!son:6.|&1/%o7u*rg2:v}.]/%k{!m;>vw?,nlx.m1b3ol*]~1}7m|=,$um%x)=}!s4ivs#,o$l(f0w[#%?gz;>}mg&wt~,wiy_{u=+7my?mv$p%asw,#7rv5zml(^)}u(!zv_e1?687bjg$:$?{t7i*;jh5/9)ci%~|-n?>0s?z:jv7/($e@-8q0<e{u$1]5ukix6(5vl+7x5{[r(y&o)$.&-23o5/%37?t~~y*1z>}{l3];<},byfq$~nct91};g^n?|753%yi:ugg{q+$i7e.;gotz<-%ny{vm$#ea|ut?$(*;<9,b}8,|/=(?1-tz<^5xye|{$l}:ugm{5~::m,}0z2n!mo(r0_,/|+*9z?=tsi]~a,%iw#.x9d%x)=}uj;n-w0.5_l(fa7[[!s{{y.>a}j3!mj>vg@*1|~>r=0=fz[./qw}iw0=z=&>u=r}!<^5fg(|tlf7f0=5{58:[=t.;/&wzm;>[w_vm$#*max[r-g]~an,:yx}$u:cvm=gu_lnt)*|&nj}[;*>|/2:v}..;-4%f6wn#w_vmn@,;mfm3-v>n%}*nuhp0;3cfy<($5?zrsvmvl+*xw]i3(q,u)utt0w]#qvv[wov:7zz@gng9!fi;s>qv/l*5zji5=r}!<^5xw[|t/fw{g75iu^::%&}~wh199s(t%+|ugfean2[oj|.//%wou;]m/qct1-tz<^5x6]3vacwo$w9#q.&v<e,!$h$f~,>[w_v1/y.|7&[;_v>n/|%35@]m)n*x_/3:u$,|/8=063n/lz>|/{(f}.]/w?15(!([%hzn0#g~~~vf}:gia%,#uzem)ip?!(.!-={@a*5v|a{o}=m{w{{{a,.|qji9/wn#w_vmnd7|<@mojn*-~|wr/k,z69c?6&m$w;na/p1@g-w{~|nu$?t#=p,;j]v5$r*bs|qa$#e/~kmv0v};<i}i|rw5~oc&uv(1sk$t_5=rm^}:uim194n{gq,b6$%f6;>[w_&/6~efq?nxltq;<#n~9gvr=r9;u41!s2i$w0|{$l(fa7$3go1t7h,!(o{o1d>9g@|~-)t;<x9ruv*~j<vr/r,$um%x)=(uukif}v9@mrwi!z[b~@5zj!]/%k{!m;>[w_vm$#>a=)mb5f,56%%#0be5$q{un=}!<^5xye|tmr%f1u*a<|:v}.]/%k{!m_wi%(t$18er_yt?}(*-~|q[y8=9<e%r-9q0s=*!w#,o$l(fa7$3g2${9.*ms@{u5^c[%^tn0#>anbm$76];s$q3/r,$um%x)=]u5_$?}e5@$l]?0.5i<~,x)>*zw;vnzvgt~<=&_#e/u?tol3];s$q3-8q0<9cx_|,!sx5#wevv|<*f}>[[!utf<(>/-:{!);,#s!v1ax>a$_3tw(}5!w%x/l15uc%#~9&f|^5xye|{$l(fa7$3(d{o%{}/_s3-s?e3<@|au+mbw?tol3];s$q3/r,$um%x)=g$w?vm/pv?19>iue1n5+&[=n}3qy[-s/%v_!v5!de-ukt@_|*/j}q[sfq90g%#)9&f|^5xye|{$l(fa7$3g2:v}.*ms@zi(u(rg||umu,@)#[@_(}ilv7iwb7|$g%r71};<@5f;]v&7ypf0*5isk1v}e=b6${!m;>[w_vm$#e/u?3f$[=r(kq3/r,$um%x_(]$6tc5w0|{$l(fa7$3go1t7h,!(o{ogd>91~{-1?.;1[:vs|]~an,[$a]9<e%xw.]5(45f)t9v7s7xw]9@(dtxgw.!nk3u0s]bs|qa$#e/u?tol37/0$%x!!em_mqfw(]tgn5xye|{$l(fa7$3g2t:n,}alo[n$^p?g~|~j8qb9}tol3];s$q3/r,$um%x)=}~0hzt)}i!7j}#!(9#}}noac>m0?1u$r%[s|qa$#e/u?tol3];s$q3/r,$~iq@!((|zwifg=30%s7#!{[f=@,xg7*a0jtzs^ct9u9|!e91u?tol3];s$q3/r,zap(x7-tz<^5xye|{$l%o}%>|/{(f}.]/%k{!m;3f=?*~m~>m|;3x$d./):%[jx]m-,9ts9g!7o5xw[|tg^wo$wiiqs{bgq,!(2{~9!p@<?&@0ge/u?tol3];<9}{yy};69p@lm5[-{>9~~q0|%c!n@$3g2::g$.#6${!m;>vn<i5m~71~x:&s:9r||,#~c|o9d*o=5}bud$@<p.5)a>{j}[3(.nxnt}z$l{;~;=?y|q//y.|;kt!yg,17,w-yxc$uw%r!(gu(4|fl*mv%a%?9v3&)2z?7/$|y;[un;}iw2z;q#%~z>}tw(,1)}q10l]0nc=9!:]n~^3o6|:50[>xw.5i)2.ig>*;=?{o-^3t=<in9#g~~61x%3>1l9,i!b]m/9gv((.~$f[x6|||6t>ow%1&gx:v1|enwr$f~,(3a^tn-#>|=09vs|i$l.,#9le-uw%f-q]~u4pu9[t:0lixw}13(dii|=7!zh[-|;]@=yi1;6,zs>}&j9,/=}e[$j]9/?(@j%e-9sz{(#,u0[p?n$$1zcwt}t,|j2:-<;(37/|um@qb9}m?z9,/q$7o!h,n9m[?5.gu_;$t_5v?m4cf_h5o5ki{a)*;<<$f~,c?=~m#lx7;0?nxl5tn)%wx9vcm/c[fs,g$jj|f)}(9!h[!q*mi6~w{1$}z$2p1$s1&/8&$5#g~~x:&s:9r|&%iml[!at(@jx]iu8$@~5|i0l%:-n9b7{(x1p7~-5(-s~ct)*&n~x>m|):{l*]bl.%i|l1?|p(fy|9$jb$@;3vrwrn{z{5#qbgz;%*;<!eu5rc&/yv90#t|=030!{7r(kiou;]9<e[?5.g!}s|?(3.5_9::z{5bqb::n,>mgk|09}(f|ytnl-,~g_3r;]e[a:}izx.-zjiv!q($6;>vl[9:$!(f_45{5^[!j!,|}j[!svgt~<v90#i@/2m#/g.$;,,n}/e;<5qx%ww|<@5#-}n{!9::j}9#%~.:/=7!(b15<;}i%=,1;hc1g_3r;]p;9m]3/+>~j|*x)7,|;l[xy[n[z)c!n@5bq6ivas,;z~[1qke&/s.~6d7z_atb73&11},ol!}!l&ctq2m:;b9[q:|i})pfaet36{(xn,>mg!c-(/gt1<mmn-.!)o|z_|,//&}ij8e5uw%rj,g-l@5r<}5v99::j}9#%~.:%q.;-h{;~;c?=~=&)c79<xvf$9.am.7{<d.ray1t9,]$jl1{}emf|^%f1i(b!6nxgqim}45/$f>:y_>i1+7~g_3r;]p;q$(tlhz:%gct!q]~==','.m5_cvq7.as=q5![=99&*v5(g97+[xy[i{-lqf|7ztl?gz;7}zq!3o!@([/(t$%f79-?nxj9,-;z3|gc|u9(*o_)]5-sif)7.5)a>{j}[3(6nb5.(~wi1n(/p&/^&|l6,!y4&9u|,/g|=@mc|;)cq{5dq-uun&a15vl6|#y}[x9d{i|>}mz#{;~;,ny{{/6!=v<25t<3(a<a|[9+>ugp(@amw0=^9x}en{-ler;z>|-6nb5$ia}j[-s/>:y_t~|~,#9}7-5p}1~n,3--p!|1%#==v-9j|fl5mf9r>:uc{3zcw$1q7;(t:/-ket(29&0g,z)23o$@,-;|,x~rw5~&c&a-t$-l{?s5=fma>/0}1[w?nx5.(~w]pu-_,#/?&$q8c/5?$o%3p;q$grmc|!6&p?l[m$w@i0<31?m+7x5{[rgx:5g$*;6!p$-)(mg~{/m->a|)m{$d}5;%*#}lcz;g{u$c($w2[9;3vt/=*byw5ow?noab,!_%[-!)]bwav9}e9m609f)g|~1:.{(jq;/9c0s1e--;i?)55{$!(-uimi<~w:/q7!u;1nz!(m7!zn=67;a_[o$0./m97{lc|!6&p?l[1$jl|fg=mv/(>x5*[#skn#q.(~w,1n$_w01<{-1+.|;kefwe.1m77iwb}?<5c3j((tgnn&a39{l*>iygpo5^iiz.(~w,1n$_w0|@{-1q*m/b:{$8,-%,%{u(p!/5=5=r=1!onx|69v/az{531&gx:1gk7;6jn$sueb_lvmy#cn5?|#gp]!s}qv6~7:9d{u$1]5ukix6(5vl+7x5{[r(o$~=n.|9?[00/ct)y7~jde0/b5@_j.n0}q:yb]m)n:t11}u5;wt=]v?=yc!n@$3g2::6n,|}?{u=;}i%n|-7@.;g;3x$g.--w=uuxg|/rq@j%]5ms:uw0|{$l(x6i=[}r&v}[]0zh:/q/5@-_tnlre0/b5@_j}|<,wr-bemnn:t-p&f|^5xyemol]>{}g$v<2>{ap}~-}15s/wam@i1~x7@))m?)+m|s$q3-a}@/5]rj4e/z45#wen[}9:va7$3(<1/=>%0(%15!k]xz_1|n57|1):iag}nl3eva8,n!g%#<9&f|^5xyemolpwojt1o5u&{a*&|0?11=f>:y_{u1x*9/%m{jv}ny$zb}8qa_t*v-,]5(g%z0v$b9a(r/pz3)293(&9b~k{!m;>[w_v16~er<)m?z|pmmtw#}+[?6r>#<>w!=^vby:|i()c!n@$3g2::z$ia}j[-s/>:y_{/6!mbw?tol3|/m[%[0l]00pcvy*.!-e*!/11?ly}v)n$[1?1-nn>m-2viq!c3<6{;$4efa{9f7g}nl3ev/8,n$q{un=}!<^*?|75t|rw{~i[#}j5v18|?zhv$_4ci9!v1w+=3<)m?z|]!($zb}8qa_t*v-,]5(g%z0v$b$a(r<(i3gr3t_bm1%k{!9)(@|)|mn/*a;otb73|/m[%[0l]00pcvy*.!-e*;6]9t1->:)*{|<|:v}.]a$+:-|^337s&1;6,&1b3&)3(a<a|[9+}!g5q{%7,!<6:uw0|{$l(xy=5i%~.:%*.as![[qsc@)yv90#i@/2mx$g.--w(3nr*uzji:)=}!s)zflct;nj}:uim3gx::zbm1%k{!9@wa6@i$7ft9ax[?zgp#~}.iyy%?<ccv5(q16bn3)5mr1->{7|{|<|:v}.]/%k{!9)(@|)|mny71u8t?$(*;sw}rwiemnn%#=$}~y4tr</vo!9:va7$3g2:v}.,1-e[/0/>:y_|~j#.;got@_:%u62,r-jpu~n(@w%350<pu9e|{$l(fa7$[1~*x%77|9j11$^cm|@|16~cnu8t?zg]~).73-9q01c=[;[=n!!i;al=ou2=?|7ztnd1v}vc~<&wzm;>[w_vm$#e/u?t?z|]b~,,[};>-g[=v955{-%:#jwn{-le@an$vnd5zj!]/%k{!m;>[%@|#78.;g~3x((}|w<vr/r,$~5cvl9&f|^5xye1?m<7byi$[1{(xg$.#6$%fy_g!g@&~=d,~$~ersi}mg0$vgr9f(:*x)c9/jdi{%kgi_li$s^n@)2{igc}t(cn!9be&/^i1;y71n)m{=+m|s$q3-fcm/c9a)=>0s!i5w0|{$l(#0]:iu85v|atm}bvn-,ptnmv[|?>aq^p;l3q09{]3-jqu~9cvl=}{5|5:611o$8i$s^$r6{(f}.]/wl:/}u3@=yi1;6,zs4z-76./mze||=q97~ct0c]ulb1zl>5tyl${wn[[}s&3!.z&/<n!mo[t=y|;n57|1k3f0ig|<2|/)-}$~9q@j:51-oivu:|tgs>:jg:i!~5:/$=b6${!m;>376i16$>||_3:l*]~1.3|gr,$um=ru9]n6b5m1jmv;^.uq}9-<2*igc}nw%15!)c&|yvm0<e15?mvn3,/mzq3j(9u_mc&~=}{57%:03.5_l(fa79bqlinn>*0(b1$wf%[s|q/m6,/z>}t}q{~1&7b$x7$60q@j:}b!4{vn3vb_li$7*i3g_*igc}nw([-ykg&-xv[6m&1ykt?y{*~1x7i(j=9(g%f-w]$ud{?n5&t6rc!n@$3g2::%p*a0([-ykg&-_1|ny7[9}tol3]u<:.iwb7$)45vs9(nwn$@ab|z|s7x%7q#};no)$]/60{z;;(@-_tnlre/)%={/3}5!$q/}1vu_q{un=}!<^ztlw9m7y7#!z[#zy5v_bmmq![!/wn/y{m|0her;#[?|3|-~}}iw#,&/;%rj:=5-@nuw0vt6+wo|7:{9b{{a*{a0<[5!u[fg?v90#7;7:mv!5}~jw=~9!qz;p(x_)5;|^>zzgt{$h{bjn5iu^:1=hg1w|p{7ow[%)i$1yz!<kvf$[{os}q[_oq!<np?9[.u5;:uw0|{$l(x-(m[!tto6,}m(ee!mj>3a?=&_#e/u?:@-e}$ywq-q1]9|&]!$q(ig^w@)*vxn5}{z}[#%2,1}.qu/_n!9k(#%)|/5#e3=wt{j(>|s{&~_1,uzji:)=}!sj$@;pgfm<7x5i1om@5zj!]/%k{u-b>3a?v518,;(>}{l3];s$q3/rcz;tp{5g=-04z:=(5vl+7x5{[rl?gz!.]/%k{!m;>[w_vmnx>!/)qr0p,/mzn[!8em~c=3lm.fgn5xye|{$l(fa7$3g2${9.,!qh1:_@pfs_i1~f7[9}tol3];s$q3/r,$um%x)=}~ykzt555f|-7fmqifg?gz!.]/%k{!m;>[w_vm$#e/u?:&sg&-l9,u-fp!7cq@ux]$u4:x(#,o$l(fa7$3g2:v}.]aq![?~,>[w_vm$#e/~bmt)e9rz$q3/re9g1{u$(]$6opu9#,o00p?0sm{wu:5/},9<k$b9!]r;@i$w+e0/)3v!p.r(k,[}0]95mctu]c#y!nt~:99%<>va5$[s!,:/%.|j2$!wzetg@v[6/.9zyt!zlemq$=~0oczqm:tu]ca|^>z;jzx-lwbug[~!<{#_{]a5d1$(/g&a?9166qb9}tol3]~)m%[}(]!)}%#==]5mtc:ye|{n)}:5im3l<}um,7!$#($5r9i%%i$1yer=!v&=3q09{]3-jqu~9cvl=}{5|5:611o$8i$s^$r6{(f}.]/wl:/}u3@=yi1;6,zs4z-76];s$q[9/,z=p%rjm=-mtc:ye|{$l(fa7m[qy$?a*.;52vz0be&/^i1;y71$27-13];s$q3/r,$um%x)5,0s.i3/>1?9l{bjn5iu^:1=h]asl{o_>>v1~{umx7a1dt?yg.;<},bsh]0;gcr7-tz<^5xye|{$l(fa7$[y)::an*/w^3/zk1t|!tnlrifu?[?(:}&(kq3/r,$um%x)=}!<^5xye|t|s7xw!9b_4nx=+i/%r{~zre&q|qa$#e/u?tol3];s$q3/r,$~q(:_9(5qkiv<kvf=h>xu2m[~2&:<>}[6${!m;>[w_vm$#e/u?tol3];s$q3-hp019cvj)]5-sif)y5tjr|xumm3gx:v1@>|j^1$|;v9wxv[6=]i9}tol3];s$q3/r,$um%x)=}!<^5x631f/j>:!l[bz_n:gs*a/!c$5?g@m+|um6,r<)m?z|pms=q1yjqz=&7{5p($5?}9~y&i(spfaq|fgb:3sp=b6${!m;>[w_vm$#e/u?tol3]~l.7m|=,$um%x)=}!<^5xye|{$l(#j}m#}qii=c7;-<v9as$nu_vm$#e/u?tol3];<|,#~c|uum%x)=}!<^5xye|{00(/y([r(tto6,}mgk]bm;cr<+{u5de0/43fn3}1;{*&-fe;/5=:_q}~ubi&a*|t1y>x-9>|/2:v}.]/%k{!m;>[%)i$1yz!<kvf$[{~l}7{-jp;-=>u=r}!<^5xye|{$l(fa7m[qy$?ag,;sh$;1^,[s|qa$#e/u?tol3];s$q:joq?;$qf9<q/!ui&)}efl+%?mz>|/2:v}.]/%k{u$^c[s|qa$#e/~bmt)+mnl.73mc|o9dcf9eq-=^nvn15{$!(-5i9ow4nxn>qm-239aov3=-i[/x.mak&:=+mna,,o~l3!;vpt0,]1j;na<}mvlk}x-]1iuszt}[]-7&w$}k(?(?,/66>/u8t!sg*/(.|#}lc$gxc&jmq-gtcv;1vr5r|xumm3gx:vs%n~w;[$}fct(xvm96cmj~z#51}5;7}{~d13=+59-4m#6opum(vf6<p1!wv:wq$i;>]-6kta=wnr1@|u56iaah[!0(}~1:(@/k,t<ccf9,w99<zvn[g!=pcr/pz3)2v&5eq/%8zams$n~4|~6@=v<25t<3(a<a|[9+>ugp(@amw0=^[bq:|i$a(r/m{|<|ix/n*/-c:/qu(f(_1|n-.!)o7-1+mn=,}b08,zl$cv!%e-5;5r/p5|7<wb!(9@j85zj!]/%k{~(/ptg6{b//7/g:3r(i]!($=uyb]m/$=in=79<;[:6*.5)y>:;u*#_u{o%{]a5d1$(/g&a?v57f>r<)[f$i=~9%3|gr,$umgt9w]ny&$v}5(tm~7fa5$3l_>:gc.;zh[-|;cr7~{/;f*$w?&f)5=0|t,oj+]1==','[1y4if).vr%<c?a7$3g2:vji]r!(g{;;wb%.|5m^>!s?|:j:*~u.3|gr,$um%x)=}u5l5x=(v&m~7bl75iu^::m{*!_dv9s0e&=6&{6y7v=x3fw:>~1:%3mc|!ap(-=r&f|?[o62ea5l}x-9[[!4iv7c7a}h{u}ue3|u&$}#>m|@t!(b{os,t:ubpt65qxg==$_@ir-em?|+*t0g[@(bnon,}/ws5-!u$n~!|~7x7/~u[f$9*~%,,r-ac9|g(0(:q-y4z:=>1?-a(xsz[[7b::=>}a}#e5$?%ny{vm$#e0)b[@s|}|swq5q}cz;tp{5.(u_yi:=(5vl+7x5{[rl?gz!.]/%k{!m;>vn<{1mx>/~xvr0qq$/n.{~d75~$c3j9]!ss$?%p|t|r%f0*5isk9-)=za0^[u$~%[s|qa$#e/u?tol3}~1i}inr50-ww?/t}uw<5anc|t|r%f0x1v~d:[=t.;/k3u5fgb/dtn;@qf=ozxj:}ny<vr/r,$um%x)=]u5_$?}e1r%+(rn7[#ybgz!.]/%k{!m;>3l@t~|dea=<|oj:>$!$p&-@]0;gcxwpg-9_|fg1vou-[!=7$3g2:v}.]/%k{!9f]rz_1|n0.;mb$z(i*u<@7{~d.m!q{un=}!<^5xye|tmr%f1u*rg2:v}.]/%k5-7;(rayv16jea=0t@_.>~jwwoj07m(w%3!%($w;n{0evrwl(ij]5?<xvv7c7aq!%f6;>[w_vm$#e/u?toj$,-;.e3j}v!;q=3}rq/;^}!nkc:n17#!=gb}8::m,7;j2[!;;evn/znl0ea1)vvyp]~a%,[;a7:9d%x)=}!<^5xye|{$l>{gn$:96{?}[]0w):-!)%vn<tn1a};1b|ol:>aw<vr/r,$um%x)=}!<^5fg(|tlf7f0{:@(utf7c%!w2$~(rpb<f1|%u>0)2mt;m]~1:q3y!p!sw.b)=gu}4i5w0|{$l(fa7$3g2:v}.]/%k{~w!]r-uvx<m.;|0505v>|</&uu*,t1cgts1}u0oif_e9?|->xu%$r6{(f}.]/%k{!m;>[w_vm$#e/~03r_{>n9<vr/r,$um%x)=}!<^5f)59$0[(fa7$3g2:v7>}mg&wzm;>[w_vm$#7a=;vf%3.|s=q[$j]9/tqru9]$/bz&a=t{$8n:-z9xy|{iz}=b6${!m;>[w_vmn+,1~ut@_]./9$w[yfqz5=(:7==-92pu9e|{$l%o}%{$s::v_9.m0j1-5/%3g<|1|k{|a;t?z|]!s.g&nrcm)g*x_pe-q4:uw09vl6[!=u*a<|gz!bm[6$1u_?p&j_&-m6.z/2mvn3>-l|%i!ze91[:t5)=-q4zfn}5{u-[!=7$3g2n:/7,;lke0mj>3m<i:|qi/$27-13];s$.i)rq!=n%a<=gu}4i5w0|{$l(fa7$3(j{i|$=/$1p$5s]f<{t$%.e0;#3rs:$11.iouxqza|c&u%}u9!|x6]5?|->x-,[[70:[g=.~w^3/zkct)<t;nx*n~uvfwp,n)i.@%a7:9d%x)=}!<^5x6}931s}:7u*rg2:v7>}mg&wzm;>[%g91%?};1o=?zv.~l:e5y:9tlk9;u/,!s(%!7jc0g5i-~n$59*%5m/&30|]b_n:|l%w|!+mbw?tol3>u;%,x~d,@7#g?},cxzkzmwe13my7ou%$:5kii<>,nnb%fyu(r(|qr0g7a=;vf%3.$l.}ouhq0(mg@u55x5]:x(#,o$l(f0n[b94nv7d]-6k[5$/3|aq9m!e91u?toje.|</q:ude9(ji:)=}!<^5xyeg:~87o5n11_u{{=>>1_gpx!i9!=c7m-#{&a*]|z/|#=;]3-zvv1#vzux3[y9%0)x=m!-c!n@$3g2:v}.]/w+v$-^e[_kwbgx}!)dqty|$a<5w#;+]m)((?l=($j4tf)=|o!9:va7$3(kn[n>9b~k{!m;>[w_v5=x*m(4t|9/,/%:*n(fp@9m=@y(g-j9it|~5tma%b0{9x%2n{)=>|s![ml;p@a?{~;r,!_?vrsi}1l(7i6re!;gcfuqq5n;5:(#,o$l(f0w[#%{(xg$.#6$%f6_wi%.z$%fea=_t@_:}~l5,ojb,|<ng@u%=-6tcmn*1?|+*$j{[#~@.:6,%;qjv9s%(@|)|:nd.!|b:{$j}{6|,[!@qa)n,9!:]$94$&sv9@mrwi!z[b~@tb=,*a=b%f6;>[w_zn(#*z/@[?<3(0($|iwoq5g~(?(((u5l|a/*m31yp1jg5{58i{q.*a_21t~,>[w_vm$#e/~r[fs{.x~|,[_(q@/5cfy7]1!d:x(#,o$l(f0w[#%{(xg$./<b%f6wn#y;m|ni*m0^vr-c]~)9q:yb]m)nq@)-t$_li;l/({u-[!=u*r<o1t767;-<1un;g&/8i1|6.|0>}t_(9rz$q3/rqz=vg?g=]5q25#we=f6^%u_(:t-%${a*tmsjv1ztg3<!&mu0&m;2:&qf*-6,t[0;c!atqfy,1x%s:uw0|{$l(x5>$[!biv7c7aq!%f6;>[w_vm$#ea=k3b5#.-~9w#}47$zji:)=}!s4ivs#,?mr%0n@>|/o1tj.|aq?vu$r]~y{|16-.;5?3&sg,56%,b%re0an[au<.!%tc:ye|{na>{j}[3(s$:%q]-6kgbm^[@)){/|->aa0t?z|]b=-]/yd]m)9g&j(({_2nf)ci;=j*b;|{|<|:v}.]0$23~$r(#%^z1|~(v6@9r_/}5;b.[98e$$:[ry5q-9!{?<svf6<zx-]m3|b:3(&q#6${!m;>[w_vmn-}a;0$zue}n6?.{j!ct<=p?(g350wifl71xuh{#u$5iuu${q%=~l&wzm;>[w_vm$#.|n@:$76./mz3|gc|!1cgts1}u0hiv/*3v6r(#!{q[q6&5/qz;04[-;<=[s|qa$#e/~23{jg}5y$*3-b=zap{un=}!<^5xye|&%y7#u][r(~${ybm1%k{!9u(r(|qa$#e/~23{j,gi%[z&1-3!;t(;_q(n6s:o6*3tmr[!=7$3g2:v}.]0$23~$r(#%-=&_#e/u?3f$[9rz$q3/r=9jm]#$0(:)b1z%19tmagt17m[jkn0j!]/%k{!m;>[%+&$1?*m(?5o$@>n%7}{j4[z;&qx_:(zs#v9;3v?1]*byem19@${6*{|_b:50}];}u3b%x*|avvr-iemw<vr/r,$~5cvl-tz<^5x6}931s}:77vv-%${a*tmsjv1zz(r|<{u1y*v649f0]|-~~e3sm]m<5mfs,g!/opumpv?59:9n@[[!s{{y..9q!:1zs(@-_$/m~7tlbmo(]>$s}q[5oq5zji:)=}!s8$tl:v{~d7o}.m[yunfs&9b~k{!m;>[w_v1~~*/g&:30:}/;}*n$hq!a9=m-(]u5_{@<&|i0l|:u.m[!6v?a$.!mo$f~,>[w_vm$#e/~4:&lg&-~[7izaq||0cv0w]u_l7v):vf7-7#17&&(gi{nc}znln$sueb_~=&_#e/u?tol3]~%tq[5oq5~npfy[&f|^5xye|{$l(fa7$3(@&{j9z;0y[00[c&|y|uwu=mgb[:geq;<9wx!x7:9d%x)=}!<^5x6pv?59:va7$3(knxq&9bu21$|wn/y{|16-.;5?3&sg,56%,b%r]9|(1ts5=/!kw@sv1t|^7f1u*rg2:v7{}|z^1!9?p&y_1|nz7z)<:3jv,1j.zo!;p!apq0!q]-jl$uw0|{$l(x5>$[uu&v}t,|}@{u5^c[%jt$%@q~~x9?sg9rz$q3/r,$um%ru(g~jli5w0|{$l(xui1m<|:v}.]aj;:55)>3l@|~s#g~u4:?y|*;m-,oyhcz|cc:)5}uukio|6q@%j>o~iq[!y$i=&}|/bni$^gt(|qa$#e/~kmv0v};<z.{yb,n9m>r_q(n6;}fn7331->{77i&(s{{j$&&5j:-uuw0%@{~;@};=_zx$+,//..{uoez0ji:)=}!son:6c337<(r77z@(8$:g$9b~k{!m;>[w_v17x7~g|]&-v}/j$p&-9v;)9c?6[]$jy:f/]v:lcn[y}[i7~.:/=7!(b15<)>3|)||l5&9)@mf<gi~1[.{uhq0(m>{_1]55u:uw0|{$l(xui1m<|i{a*9b~&w$!kp@7!v1g?7m<x9fzg]~=,}bqvc&/9=v0(g!}8$@a*t{nk%oj{[#wy5zj!]/%k{u!kp@7!v1~~*/5?9@sc]!($7b!bm&);>x7-tz<^5x639onr>i;7{[j6tv7,}mgkvu5re[s_i1~f7[9}tol3];s$q3-;em/$=v1-tz<^5x6pv?59:va7$3(bnon,}/wh:/qoctg>,a$4e0~@:&)g&[a:}izx,$}m9vyegu5l9{|593q/qf|7e$!$>-m6t?g?{;ms$nu_vm$#wma0mmu:};7wwx/8,zn$co7-tz<^5x6v1@$r$$s]5isk:3j.*a}j[5$/[;5|qr0ge/u?to7c]~n|7{/rczn5%f!mq/!k$&<p1on)*o}i1i%2${0.>aj^:5n;er=+$|n/*m|b3tw.]u/w.i$x,|65%r!*e-9spu9e|{$l>xw.5i)2&3}.(~w;v9s?(3a^z;u+mbw?tol3}~1i}inr]0=pc5=r}!<^5f/1v?jl]?0dmiuqii|(7;z2n{0uptnyt/mx>-%|mv$g./~9e[_oq!<np?9[.!%tc:ye|{$l(fa7:in25:/=qmz?15(4%[s_m|n@c/z?n{jz./~,,#u!,|/=(?1-tz<^5xye|{$l(fa7$[y)::nn}m/k3u0u(/y{vm$#e/u?tol3];s$q3/r,z<ccv1&muwj$tn5v?m+7fmz>|/2:v}.]/%k{!m;>[%<|/5e91u?tol3];s$q3/r,|)5qry,]tgn5xye|{$l(f0w[#%{(f}.]/%k{!m;=r=+|ogf7/n4:&lp]~7m,&mc|uum%x)=}!<^{ra.t!7]}:-$1&gx:[=,>m923o(i$nu_vm$#,;goz-76./mz3|gc|!1cgts1}u0hiv/*3v6r(#j}1#}p.v<c,!$<[/|s$nu_vm$#7a=;vf%37u;5]3-dc99m.o_c=/yi}myv&50[(fa7$1==','39<np?9[1uj#|x611o$hgzn@$3g2:v}.]/%k{!m;>[w_vm$#e/~23{ji}5~9w#9le-ncqx7&=$w;nx=/=!)q$n!x=1}3,1/b&?(%(!/;(?$_i16u>0)2mt;],-y%c#_hq!-=1!!)vx5|,|<8p|1tiu-l(~l?:[=t.;/&wzm;>[w_vm$#e/u?tol3];s$q3/r,$um%ru(g~jli:6c.5_l(fa7$3g2:v}.]/%k{!m;>[w_v1m6,#9}tol3];s$q3/r,$um%x)=}uj;n-w0|{$l(fa7$3g2:v}..;-4%f6;>[w_vm$#e/u?toj|.-6mw#%r]!atq-=r}!<^5xye|{ny>:;u*rg2:v}.]/%k1u_?p&j_&-m6.z/2mvn3,11},[!0c&/9=v0(g~~b:uw0|{$l(fa7$3g2:v}.}a0):-;;]@=<|a-#7a|a[ol*]un=]3-s(:9d%x)=}!<^5xye|{$l%:w]$5;b:[=,.nwb1z9s]37~{-}8ir;nc:=3.~5<vr/r,$um%x)=}!<^5xye|{nd>i67]@)2${a=*/wb1z9s]37~{-}8t|=km?s9*~%,,-yxp;lqgt6&m5jd7flg9fm6c#!}1@6?::=n9b~k{!m;>[w_vm$#e/u?tol3];s$q[$j]0;g%fu7};g^iv)]1?mk7-y}9b}]{i|c=as!v1|s$nu_vm$#e/u?tol3];s$q3/r,$um%f}p}u!85fl59{nr>i;79b}kn/~}>f6k3u0u(/y{vm$#e/u?tol3];s$q3/r,$um%x)=}!<^zt)pv;<8}/n7&&(8t#g>9b~k{!m;>[w_vm$#e/u?tol3];s$q3/r,$~ng?u1=09oi3/p1@5/>x5em3)2{#}&9b~k{!m;>[w_vm$#e/u?tol3];s$q[!le{9d%x)=}!<^5xye|{$l(fa7$[}~i9j!]/%k{!m;>[w_vm$#,;go7-13];s$q3/r,$um%x_p]1;^,{}e9{n->v0z9[q?t#$t{|0j51(ap&|<5#=f>r/b:v0:}n6n,xu!7$zq%fj:&f|^5xye|{$l(fa7$3g2:v}.7;1k[;y}];}u3on~7zn2mfqi%x<:,bz@c$yq%rjm=-mtc:ye|{$l(fa7$3g2:v}.]/%k{!m;(3a^tn-#7z-kt?yi]!($73w(]!%5g&j)=/}d5fn}|{qhpf0%i/qs&:)n}v(29~|;(?$_3;qe91u?tol3];s$q3/r,$um%x)=}!<^{?!e5t6k7#yz[#|@nbq&gm5b1$|<5;n{,i7&nt/i(;__z#)0z~1h,z=&%rj:(1yl{?|g&t|<c@q>:iu^55%<{rs|gi_1:z)q%ba:ir<.zxji7~l.3|gr,$um%x)=}!<^5xye|{$l(fa7$3g2:v7{}|z^1!9@][wav1lf.!)b:3_a,-~|$[0;c$n1>u=r}!<^5xye|{$l(fa7$3g2:v}.]/%k{!m;g&5_t-$#.;got?$(*;<[7i!l10)|vo_%euj;pu9e|{$l(fa7$3g2:v}.]/%k{!m;>[w_vm$#e/u?:vs:}{n{w5|rw5~n=3y(&f|^5xye|{$l(fa7$3g2:v}.]/%k{!m;>[w_vm$#>a;!m?<g7/m[7{jb7z1q=&l1}u!8:uw0|{$l(fa7$3g2:v}.]/%k{!m;>[w_vm$#,;go7-13];s$q3/r,$um%x)=}!<^5xye|tmr%0n@$3g2:v}.]/%k{!m;>[w_v1m6,#9}tol3];s$q3/r,$um(?5g&f|^5xye|{$l(fa7$3(6ii=p>m/k1u-fe1y{vm$#e/u?toj:}ny<vr/r,$um%x)=]u5_$?}e9@mrwi!z[b~2&[72,m0y[00<]fw!v51x*m6b[o=+m|s$q3/r,$um%x)=}uq!$tl:|&nawojwq[!y:3j.>zqj[$5?cz|?t$$8>a;03vsiq{<,wb9b=9=p*x_t3b<;wt=]1?|+7xu]3&6{(f}.]/%k{!m;>[w_v1/y.|;kt?_:>5y$p&-ne9<nc&~.,$94|{=*m3%h%b;iq[!y$i=&}|/!q!m4>m)&*#;%|&g:e0w_z[a?$~!i}$~|cfse=#s!z{|@t{n<wby*1{%~.:/=7!(b15<^m#s|qa$#e/u?tol3];s$q[5;p$gf53uq]-l^3o66q@%j>o~i[#}j5:=>>zg?{uzu]?(_9;$8}0)f|z0/>n)77&wpq0=e9vyegu5l:o(#,o$l(fa7$3g2:v}.]a_jv!sz(r|u|u%f,/u8t@_|*/j<vr/r,$um%x)=}!<^5r<]1fsr7{-zm3j%.-g^n3qmeb$%3;q~=&_#e/u?tol3];s$q3-dp;up1?5eeu5ln?se{:ndwoze1|<|:v}.]/%k{!9u(r(|qa$#e/u?tol3}~1i}inre;apg&j9]5m^n3ap93)ycx9([&)2$[|e=b6${!m;>[w_vm$#e/u?m?z9,/q$wb0~e5uw%r|-tz<^5xye|{$l(fa7$3g2:v7l,;j~e19uc&(_v90#}0a^||!v}~n#w[!xe$5ji:)=}!<^5xye|{$l(fa7$3(|&{leia06[/=;>:y_z5mh=3%#mrj@}5/|wrnc|uum%x)=}!<^5xye|{$l(f0sm{wu.x/c,!(2{;~;gv=;m#|?>a=9m3_v*~j}3|gr,$um%x)=}!<^5xye|{$l$o}.:[!6i{q.]/%r{u0r][/%|/787z)b3o%+m|s$q3/r,$um%x)=}~gtc:ye|{$l(fa7$3g2::<p}~-=:-!43?%<&n5#e-9?{u76];s$q3/r,$um%x)=e~j?[9m>v3n%>i_w9rg2mt}e9b~k{!m;>[w_vm$#e/~4[f7g&-l9,ujjcz;n(o)$}u0kir/p.5_l(fa7$3g2:v}.]/wovnm^[&/^z16~,;-?tol*]u6:%i;c|uum%x)=}!<^5xye|&%y7#u][r(y{im>9b~k{!m;>[w_v1m6,#9}tol3];s$q3-8q0<9cx_pg-9_|fg1vons>:s]1i}ait<t*;6?{u0r][j_{~|;,~z>}{l3];s$q3/r,$um%f}p}u}hio6]v?5l*#u$i-(4txg$*/wh5u$^$nu_vm$#e/u?tol3];s$q3/r=|a(*m0q]u$(zf)p9{$l]?0e5{$k1/1,}a!gvu$uc[w_|uw#cuj>}{l3];s$q3/r,$um%x)=}!sb|?w5]@m0}/0{mb}6:v}[]0z^3$n^1f=;{:ny>|a0toj(>|sm(m|=,$um%x)=}!<^5xye|{$l(x9([&u.&i=nim0h:/zu>:y_957x>m0_ersi}:;,%[0be5~>.o_[e-=o5fl59{nkwbswi/q+&:/y}z(^3un;(?$_i5%?,b9}tol3];s$q3/r,$um(?5g&f|^5xye|{$l(fa7$3(?if7t>9%k:-s~>3)+{mli.!)bm&)3*~7|,a|=,$um%x)=}!<^5xye|{$l(x9]93u.nxnt}z$2[!mj>v|)i/96t;g;9?z|./y$,olre!;g=t6-tz<^5xye|{$l(fa7$[}~i9j!]/%k{!m;>[%<|/5e91u?tol3];s$,[}0]95m(3y[q1yoitze1fmr%-(wv$(6iin==a!290;;cv=+t$1+7|(27-13];s$q3/r,$um%x_^e/!d|?l:]vl)7b!u5iu4iogqgvz21$z.ct<7i/m6>/nx:&s:q;<>7{m8,zl9cr!(,!ss$?%p&50[(fa7$3g2:v}.]/%k3u5fgb/dtn;@qa/#:tyi7/1.e||=,$um%x)=}!<^5xye(?;^7#u}[1y~t[gcz;}!:-wu]x~p&nlrz|ad]ru:}$yw7#08p00g%fz(c0=^nvl:1f9a(x_}[i7?gz!.]/%k{!m;>3=?&30ge/u?tol3];<},byfq$~[q?5eguw!i:6*1@;7}:5*1b}65[7q}|y+3!/wn#w_vm$#e/u?tol3]~=,}b08,z75]o)=>0<bzra1v3n<p5(wvi5u{i|*||q#c5_~ci%f1|nv79a^|z9:%#~,7[;l:9gecv9*]z%^$?|c|&n^>{$=m3uzii)}}|}j[oju=||@&19#7z_?]f${}am^7{99q0/5*96-tz<^5xye|{$l(fa7$[_u{o%{]a_;1u|;}iwu{5%y7!~x|z((}~6!%{jfcz|cc:_:(z<8:oym|z~vi-!xq1q>gz!.]/%k{!m;>[w_vmna7z_?9xl*]!_}q1!w[&)-m|!j59s2i$w0|{$l(fa7$3g2:v}.]/%k{u!kp@7!v1g+*maotb7+m|s$q3/r,$um%x)=}!<^5xye|{$lcf9gv{(kno9t.|qh[5$^e#s_1z0#]|l#mt0i7/1.=@-fq!-mqr}7=-5<:f~p5t=y>[<|{&u)$i|>>0$;9u-_gtg/{5%y7!~xzxl*(as&7x!l]a/qct1c.0skivse1t7j>x||1b}8iog$*1)bn$}s]r=j{/6^};m2[@q&>n17w:~8,|~&ctq7g!%o5fn}.5_l(fa7$3g2:v}.]/%k{!m;>[w_vmu8>0|f3fz1=o1@]#_hp!a|=v9|e-(o|rg.1?60}#;z$v<x:v1w*;-)3u-k(#9~v1|6,/~fvvyp};7d|@w/=m)5=ru:cuw?{@<&1&%f>b0gi3(dtx/i>0gb$09k]/y{vm$#e/u?tol3];s$q3/r,$um%x)m.~yxzf)19o~d*byw9:5uz:)i7!(#v~qk(t%y9|$4g~u~3&sg,56%,b%-75~9cvl=(uukif}v9?;^%b0][oj?n{)c%!wj15uae[j_{5%y7!~xzx=+m|s$q3/r,$um%x)=}!<^5x639onr>i;71#y6i{q.*a_21t~,>[w_vm$#e/u?tol3];s$q3/r,$~q(:_9};gf5#jemvl6(f9=9#!ot[q$|a0?[oz-]r7yzn66ea=0tble]!9$(3-b=zap{un=}!<^5xye|{$l(fa7$3g2:v}.]/%k{!9fc&/s}~mk{0)b:3a]71lg]3-dq011>u=r}!<^5xye|{$l(fa7$3g2:v}.]/w21~(u$nu_vm$#e/u?tol3];s$q3/r,$um%x)=}!sjn?|c]fmuz#yw9om@$og3q/wec#9c:9=c.{1c|&(27-13];s$q3/r,$um%x)=}!<^5xye|n==','71ilyym)-c9|l*e;%:^y2m,z3kgsm0nu-47um}_..un]oo2#/;]z7$hez|0.,r_-$%@l#]3%2.6{|l,g&-.3&f$]k(|48_}xt!bq/*jr%m}bnj9a^_3np<>uk~?jh~yz6$xklfv.sr|~/*hk~>+n%r-|l%o*<<e|2,=a]%~@03&y,8<&_8-qa8ojo;4vp]ls^7#t=|o$;~zc;y*z,?0.!y#:wcz,eb9ve@-yu9lb#r>chv.]w~cmf~c>%u#(@uom2|g(}^fn0#wmhf#$7sweer86w9sfr]n4t)[cel:kqy7b.+f1-ke=~!r{~f63o<)-|!8(0>%rz.nx}}t2f6%y/$@9&w?8*ysw%)<c*5gw]=nr^d^y7}|h$y{/h*oqn0~}kib9&j&}3e-zaa=:uf#yx_<y!=j9:0b95oge;p0(nht]258i!9wbqbk9hb4)cw<.?q(9s}/{.#c?]61>kpy3&*>g^yb.rgdg2:br~t6ne4ov+vvap>mt)/v$@~i%v:;clkx,|hu1gblup6?h{ywvb9t&u3v8wnp90{mm0}15@sgk8gq]~3/ad[qtt!yko+{pd3.!5cke2@/0xak,au2_0le3/9[c:6gnkr|(>g:nau-1n*z9z:a>~g8]5_uy>:$q>|qz0_~q(xo?%p>p#5qsw{%@n11b#(0g]5&x-+5z&qg1j#lx=^-.^pk~b0c=$=~v?b<kv?.7&b:}6(+yrfp(%o!{dx~lxi_3w{!u06q!/s,p8e3<=_^xxw})sr/lr{4,;y>/sz^x=m:gi(r{g;<b8q$>pw)]v=385l{r,5a&r>87@/;%8.}j3z5kg2cw7mt,*7yzo@7l.f2}:vug3t;=75b{da}/ms)#$!45[.,j^n?2uuf7,c/u)[2i69x+u^/)#b+h~3a@&r98)omo9ijr}@4o:n~%qf;g17r4,/dgprdiy!*fbehna$|z3$$>y/si[{di~z&l>,#ujzohs{>?%a5k1r8)&hf*br2bki0i,_9#<q9i2<7o#o_.?ndpw%|_$n,;k4#|??,mu1._er.ot2=c.)nj3h|#_ij9^~7z2:.p:9$g+_j~v^nw}+z9qh5c><!u%ehcior-]-q4<{g2+l6q7l*kp1+j>j?a[*=1;ig?-$+s5dbf;)5c/uai;@-oi[q;-:qx}ebo41h|71tx*f4hm&vdcx8t1ikxm{;(:$$4}h#%it,$e&:?fu(<#*8wg_jhcu1=;2]a,!?u2w#x82*?~>t9j+&j~,gd{;,*@{~)kap~@h>zbj<qv86=f#tw5jw50^fn[|jz~1;00pp2u{6_k0b:ty2q86d7y*zr+q)pkfocqe>z3>/(~e~a]^%xm}d~y>/qu0l:-wa~.9k.92_gai2#!z#(who-dz=e]</)l.%:upo@jemea%|=_c9|99^l@.|utb]f,th_)+_[7e[.th,_?$03!x%ti%$>|n$(i4^fb_v}60/_>.)iztj1s~5y|@)%*8f#l#s>[+kz6koe-l!(cnqn5<-,.k0a%}?ip)ak*yk9qg{de+6=bkp7h^i/ny}[}>#])#3at~j{%ln52t@qeo1u#j]x%:~xj1;^;obkrk1&eugz~lq<7)>h!z9n$>}-wjy!w[f@{^00$tu;9?^5l+clv=,kq+5|e//v57a~g=xz+!r<-~+4>x+:|e5e[]%qf6=#k4h94^kc=$/!,nut<x?+|l#3a&$(m(,wtic4xz4al@doqnw5sp4|i3qy!z&,[#~_)>z/~%p4$^1)ki/.=t2e8i#<y]&j&./;d->2[q?|>;53=r(>3[/f@81<~~.ja2k;)}m/2[;&h]b1s0mt.9}0q2#j)u&-([)y;z;^j=@c6[8ws.u,@,f>=q@t0n/k,g/(-e%@.-<c26ts;}!#1ttt8_<bevr7^0y[k{t)5s^4|y_)c3c|&hqs<wlulv^y}q[7-5|[,~xkgi^2$6=!(.@&0m7$g#o:%s-9%:g8<!y@.@48-np:a7]~#~8_t5x_*1+(;2w1-%{5k*r/u?/[qd_b!prgl=5#2)th9-9i/li@ozs,+hk@}j)=ls[*1?*0|ff&(u{<0a(51c4)]dw3!:>18wvkjra^n~8asb?yy1ng!:cs2i*t&d8&y?ec/k9$;:m|,olv#z^5ud&ho%#+p2:a.4]r>hv7q[f=p!=}$[emijc^b(#g]ilwd:(^p:m3]bg$v*j#016._]<0[^pzw${zlrp#22,d!6*9k#;ex}}*<5zq~9x.+8n*%{60d>[}h$*a)x{-+._qf~tgp0<&3>!](.&@2>!kwi}-p@i)rba@~_s1@u.:b>=5!&)=;|t2a(;4~j]iz6ruw;4z4l[g0d!h|z4&5gvn<u:j|96_%96u1kf<+vr8kftdgi+4zt<&;8/>n2ay7^!y^*%@1-*=z;}a5%j:6?%:m0p7[{*&ur(s/_*c]3l-}*oc6<r@f4,}c~~j2[5n+x2rik_2h@2=?y$}o(.[e4{69xo9&1gy^88n39fm#<5?@1l}kl_s==gg2d>^-%m]35$du{6%*|}t*50e+u-8glc-v]&bufdd@d-<!k,2k^|yy}<{8(s3lns5{:6n<0/[/6*5-fs*h{/p$o4#9[2!k_}8bp/dfg4b#>.~)|78$(y9zv)jm@@u9,r,.xsf?:q[}[.|cxt@c9m61+5[#+.c#babsh<j/rlix$-@6@xo?c&q>.v)g~~}1(!abw1*s&>g<&8{{z=?,^$:(/<o-]{lp+>hd915,c$<<z?<l3|?^vtqab:{*prith2%3+]rf,rz:hq}4(*lqf4&z4je7}6hx2&r{.gtm,yx/75k/2#~a78p.(yi1uc~@87@1a<i5yvt#)p5y)pwp1&~by0?w8=0em0g(^yn,;rykg@z39c1{9zjy>-:{z!e_7+f!r?/3;v(|?$yg8!]x7q_w)t5:~.^s88[<,?=;/?4{|?l^:?u9{in1j@$sr4&jsn}g^uybp)sc>ah=6o6-q*3zp?9icul[&}m^|psc4;|%#j/t,|#j{+=w!o3w7lta[s;im)5d&(:+-b6|9dwu79%=ot,)%aqa{vtv-=jc:6t4zd^d}@*}%w{,2|=u73w$3d|y.ww#tb)_p|;};j&?~-=~ou2+#in]5?gd0_:$$@cn:v9pz#&g>c{s:0#avt{:e|ia88^09wm[}1x=:#f?#y4m>v6v[aue2=2e5./!_!^)tpav<7fi(g[nv_*xi|_;6,4q3@6>)((<blf+.-@[g]($$kwm>/)v6lb7h7s:t1;/7{wc,kx6b0o]zuzg{t6=~_bm3gej(*o_>:,_?zg{-[n3in|{vnhv{(e!,cio+,vy22b>0.mxy@o/l}:+6)2:k$<9*2^ps&j>,y*ng)i=wx+z1s21e$6hc@)@x<]7&aagiq5o}s+upv.61!rd8}=<jsybv0(giit<u%6qds_7v$3{8n|]f&c*{5chuh*[fu^o)>q!!8f;]o(vt7yq>ep2:wxe2&w5c7{3o*|~m$?+k@-ub+/y>r#l<_@1p>paincn0^fusd[v54x2!.al*(?e9~xp(^$ah}&w4a<+ti~9am/e(~^b#c+z[8g?g^*-}}~|nf{9vu!18f@g~2,v&bi1&(shqoc13ms%]$acp|9k)4c7x25x?>*%h!8<3t^im_yv]9&w+gy5k=qh-~jjm8)olz(,p*fg^,p3zr0r7)x,d00ddbb.%yht>#^4%]3l-8q:_#<e~45d8rb=;ux^0n+vz;00w6cxmx-y4bpg{d|+^6c_1*utst]>|;ad/_!te@olj+r|_^aff6d0r-%r~hq%vl(/y!_ze^*&1:{6}3}?%c>m4oar#$ue]1ki=au.~f3((hd=b&/94m?z1}9^@v?m+xd92kw1&98:cj{4(~=9cq^j=u.s4e:8r3.91_%:)+r*a+,^,x;+soz(#1lqvj*{:*?<@##5*rq{],&9b@hl.x9=}}ov~1anx.glmlzau[hmj9g~]y;d8];0fph.5#4?of6);l@0|.@p1==','h&?fng![z7n;]!z0vx+6;(ztd%}$,uz8y5shze,w61[$u^:s*px_]bk^12[.*i6p79(n@3l]yt0|&uv}9w*&l4u+i=7pptq!;@hjrg<9v4;n;-nee@k]$_a.(a=tsz&[+d,}&hbx|f#_|0_)*m}k2|cb.}q|!=-_i3e&l%.;k(ac>eo.]:f.q^0j|=.d1,1#+g.^1<ra(2d{go4!a$f7gm(mbb%kehx#0!~~~.~5p1e+#rh2$>oaq7?%gq7cl#&j]++<y8:7w]fk[_dm71ek9625eb@j}7>f#3qd.#a.7m.%509[j5m)j$7{6{p^f5k|c:s%;lm7a&/5lv^^i3mrc>yh,%lfe75a$4nbi5x>ypy=9_d?+ke><>nw}#]}j1%0*y>~j0bf82z87=pk6oe$/mkgo,l{hr/2vm_+xozlqf@;0;,>ei:0:~0}r]62(n;t)q|}erz|k21%&xa<qp$ldz*+$#pn)0/fb}[(,%?z1tj^3x(+i$kss%>644i$2a)}bm^}~fc7?o=x.may7s)s!#66.n9ajo!?qu[#@ar95th7)/)af/8;o_0>t?*rbh#q9b=rgqdk5$c.tpf95+=-]1!^q84#6:.7l775>@tu-wh9m8z!;:3nld@61x~]wfgb^g}*+dk?|)btcsn+p:w-m@nwk@7oq0(ec7ziq--$_r~2|_[$~!]f6&=luud0z7c842pb|t)ut![*2yr?[@.39q|<?t(yh)})90{[>=:/}?7$x8)ef*xk@+<$4y]-gwjua6]:+=zeub;ay~+(f.fo<~{s-;]=!$y/h!f^=81>zxu*2:!&vc)d<p~#gh.(cz|:7n.)f>{l^n~_1v%d)0,.@yx[g?=c:q81bv*g000z>;8-bxbd)9><q3c_0!/~ax?7$-=gthl(jm0|~b~fe,p^b24/$.%^h#qfuek}},v18;gbp>0#]38n<!)tfg9s3u;k$,p}~.]v^8!n3@s.;irw7mk,%yo]cse^5b!jbz=:n(:=x{(y0&0)1c])4;8;[58{m_n2&g8$;z>&c=>-#o4/;vpsoup+;p[.[{=?kui/~v|]~]6]xa|-xvz:5eh9%5ov~d7|x}eq|y[>p@dq[.5=neq>wv38%51*b]a&e1lz0i|e9?q=7.l9tr|9zp<t0a{]u[4~^0]qea,/0_;&4;x_sx4z|g>>>)yy%/7.x!r>[h+^[7t9$+wf8/o,g8(29dz1.-:xg~:vygo|!?tns4xyky]wrjd9dl*3#80>}75<x^y?hr)/9]y((]!&jce~t4h@~<s&^{0k!:-e@50y!w22b=h&7]|^t5_o7?7?ek@>]hk@(l#_s<k[?g>2e[<:-^{,q>0fsma@@^>f{i)&eu)6?3g8/mg4^kl{g8#x<a&>v>^76h.;;t~.~^]s2.}?g{zg,mjilfj#}?^r+/ub3zs&gn.n|^x)/h~(f!s|@edf{z*=@h{+;i^qz33ypp2_-[*0/x2pj7v/9:xj=}n7<sp.iw}[[qa3~%)u[:9neg[uz+r#v3&12k3%o}mcu+9lx)!49dpv6.kae.$:ps,9k07~(!ua.j$y)mgn[$f@08dija~>729s]q>be*o&w>*7*4-xc;^i~ndq%)om_/^+]8|l;3{3,:fsy<@hj)(hpj?<o504qdg3/r[>].6&(n7o{p2v86?25-j8tto{%g$>6?1[w<re+yb?fllx=u%aj<mb}?o[^&6k|!3hj:])1$n>ld2!+$;3u56>lkmq,o@v2d.i=]?k4x~a8g/.k&g0[~$zwr-50wry_fu>=t>1^_.|sq}by.fkl[[w~??71)xf5vr,,m$2u+#)&8w^{i<i2)2625-p15.k@jw:>f6|8/|@%|;/<q-_.j$v?y=^7)-yhy%>[4cl(<g264d3,jwl_:zuh/c6hl@]j|,b72{d:n^/n!nzopt->pdn7&%7]<+^i7ly6i3-.jvp8&>1+k#gu&>:it7*06=gis9/fy7s[gno4-5xrbqrgjh#lr=c77}b=,d#b6:[c>t;ykg_6xq|*7;^3md*i3h)_7j..]oass0nd[~:w?@pwfz.wl^60ny>q2r~%@?zr^_/^)j?5?43j1729=i;#erpq*ygb?=0}+_{cl5^z+[|#l4+yo3(40.}zdcfxpjo=x_]|4?p]-3ma:n)~y426(6~gwhbir52%@s%7;?6np8::!3>qq55n?,$s!f%9s68b);gy_ew>!@e8%[8~*4mpo^w5!}k^@.[0/j!s!b-s@[%29a~*wj*k]wa04=$e#9!_}r]8%(7by*7z~hvcch[[8wj_)x_2?(6x@=sgw=c4)i;^]#ms.@id0=+/?mm$!^:n.r}qf0,sl<6c6}]a])e&#=/&6$84_#<_#}&w&ffewf](%?7&^+v,-;}g26r0fc$q.(wjz8{5*6qxw!b%,b00w|e16b,c7a^img1d<-hjbxy,bw-{*)&x7(6*8)#}dw7c9[9+~-ra]ve]_+^#!s|*sd!x;)x-a<[1_ex3<likxu46)c;@4(^t#f+.dnp}8%-fz7y*)w2};y}^p_tqq.{y$s1d&@<i2=2-i~<-7x[g@*ytn6[)wk_vqlwg9>*gtfe/)]^6+/a*k2$=~m8[hc[_d7wqw,7:.r?b/(.g_p#pg~n2sf!.^:6t[3qdl684mb]z7f>#!~@n4{|9p2vk(,2&~1aur<mpslaf&%z/^&7&djw%etv;(f>t&0x1^vsqv,z$t!z,.nnjvs44b!>x[:>qo&vd[#=%ii9@!3so!@i:-1lu9&^k;@&gb{|szip0=5b{%/l}6.ot[myu$?x(^a;z30|jp5&(u70xu8~d2l3i#66jo%;;##s~/?rkoog.{%$rsu^~}^u<,{(t,drn*tn1--kw1t*4%,qj;bf>tf9zw94m]o1zn^8j@#y3vt>$0#5oenz8%(,j5k1}hp(vazb3b#]|y]c~/v(#_;o~5]miec5}qr7o&i}&h?@h*{y6d[7cgr3{:{z!b%?}}.inu}},]8gb8t|/^<%;+<8^#7*ap/p./9]<1#(@^mn1=]^v.avd>(x0d/qbm2c@w7245pa>-2i9}i_&+u=ubqpg+>~5f#i[-6=$+]rd~avll(^@~+#w?@n%b$zi79kp|*bg1{}*=/[:&7^s$p1t417g6|n^h+b^)?a2fqb~^:=8:.r-)=-sml;9/.3y;s{z+w8zr>?2[xk3$o,(=7jm|vyx&4jlwc~b9-<$eh)2#i?dbw1/i5/3&ddqoifn0c/jrl*=o;[:q,2zl~/m<@7xuy}?}w+7!#]s-ev-&gzrskr?!-x#z+}s759ve$oq/+y6i235pfh+|z#hmy]2m>bn3ewh~c|?*9pzeqaq&)xs;4:>fg7g[:/5d2az[^y:{[,@]l!{js9pk!?*@76k{8|+c9l^4up[l*7<{/d=12!5f(@dv*=le]u0&}2{*6+_2e.wmqz9)&k0u|]*}iidl*3d.9qjrv]-6s5uf?@6t9pxeqzdmjl:8+k0@+,[~ivckn83lpt79m9[sp]?^$,y?-,t5.6=ukkfh;9.7x48q[;8~]o_x)_&|yjdart=bt!yt#ejq![^m7wj}##2v3?u:1%hffw_2[eykp*+%|d^h.!9mt<wt+=t&&/}l~rzu}:q|_{(o+[rc]q~>1*&p}&$h;?f?sw,#9ty--[3|be#@^;b|ohm<(vf_8$rpr{e2+|)!;_{8~d:|<:bc$d.me|?_,5hi:)t_9|.so9$f^1g/-q>|bx*yd#l:p7k0t2c/w0>k,s)|a<_p/@8wg}/o&i64,[#061am,yp~e$]ubk/e_;c$51o@d!m~v6b$9^76#(/{q5pgb)>4;be0;jd%;37+gu.*u%snvdr7~w0(d:sf8hu(-^12t3d=,#fc]m{=_q{l|;>95jrk*ffcf1j]@}#z*8~0(!8bw4h7{t#<mh>j+^*<z5[}^ik,6$5f4#m,,.d(22}8d<?uzz&4*x5@1h*<7$5yn%z9>:yzu}z|kl*18v:,~)<n=='};local SALT=(function() local s='vf|o7w&^&=dnr/9|'; return X(D64(s), string.sub(A,1,12)) end)();local RND=( 3748+8036-9736 );local PEP=BX(2561693491, F32(A));local SEED=2652471528;local BIND='';local K=KDF(SEED,SALT,PEP,RND,(#BIND>0 and BIND or nil));local H=BX(1094461947, F32(K));local O_raw=X(D64('[s$.?}gw,,*~grm='), K);if #O_raw~=#L then return end; local JJ={} for i=1,#O_raw do local idx=string.byte(O_raw,i)+1 local seg=L[idx] if not seg then return end JJ[#JJ+1]=D64(seg) end; local C=table.concat(JJ);local function TRY_AES(payload) local CR=(syn and syn.crypt) or crypt or (fluxus and fluxus.crypt) if not CR then return nil end; local n,ct,tag=payload:match('^ENCA1:([^:]+):([^:]+):([^:]+)$'); if not(n and ct and tag) then return nil end; local B='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/' local function db(s)local o,val,bits={},0,0 s=s:gsub('[^'..B..'=]','') for i=1,#s do local c=s:sub(i,i) if c~='=' then local v=(B:find(c,1,true) or 1)-1 val=val*64+v bits=bits+6 if bits>=8 then bits=bits-8 o[#o+1]=string.char(math.floor(val/2^bits)%256) val=val%2^bits end end end return table.concat(o) end local nB, cB, tB = db(n), db(ct), db(tag); if CR.custom and CR.custom.decrypt then local ok,out=pcall(CR.custom.decrypt,'aes-gcm',cB..tB,K,nB); if ok and type(out)=='string' then return out end end if CR.decrypt then local ok,out=pcall(CR.decrypt,cB,K); if ok and type(out)=='string' then return out end end return nil end;local P = TRY_AES(C) or X(C,K);if (#P==0) or (F32(P)~=H) then return end; local ok,err=R(P,'(payload)'); if not ok then warn('[obf] runtime error: '..tostring(err)) end
+-- FairyAutoHarvester_vNext.client.lua
+
+--- Services
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+local CoreGui = game:GetService('CoreGui')
+local Workspace = game:GetService('Workspace')
+local PPS = game:GetService('ProximityPromptService')
+local TeleportService = game:GetService('TeleportService')
+local UserInputService = game:GetService('UserInputService')
+local HttpService = game:GetService('HttpService')
+
+local LP = Players.LocalPlayer
+
+--- Singleton guard & cleanup
+local _ENVG = (getgenv and getgenv()) or _G
+if rawget(_ENVG, 'FairyJar_Cleanup') then
+    pcall(_ENVG.FairyJar_Cleanup)
+    _ENVG.FairyJar_Cleanup = nil
+end
+
+local __FJ_CONS = {}
+local __FJ_INSTS = {}
+local function _trackConn(c)
+    if c then table.insert(__FJ_CONS, c) end
+    return c
+end
+local function _trackInst(i)
+    if i then table.insert(__FJ_INSTS, i) end
+    return i
+end
+local function FairyJar_Cleanup()
+    
+    for _, c in ipairs(__FJ_CONS) do
+        pcall(function() c:Disconnect() end)
+    end
+    __FJ_CONS = {}
+    -- destroy our UI if still around
+    pcall(function()
+        local g = CoreGui:FindFirstChild('FairyAutoHarvesterUI')
+        if g then g:Destroy() end
+    end)
+    for _, inst in ipairs(__FJ_INSTS) do
+        pcall(function()
+            if inst and inst.Destroy then inst:Destroy() end
+        end)
+    end
+    __FJ_INSTS = {}
+end
+_ENVG.FairyJar_Cleanup = FairyJar_Cleanup
+
+--- Config
+local Y_OFFSET = 3.25 -- just a few studs above the fairy
+local FAIRY_OBJECTTEXT = 'fairy' -- case-insensitive
+local SWING_BURST = 8 -- a few extra swings to increase reliability
+local SWING_GAP = 0.08 -- slightly quicker cadence
+local LOCK_SECONDS = 0.85 -- keep player pinned during swings to prevent drift/void
+
+-- Self-reexec config (local file / remote URL)
+local SELF_FILE = "jar.lua"  -- keep if you want local fallback
+local SELF_URL  = "https://raw.githubusercontent.com/fazeclansuppor-source/derasdwasdwad/refs/heads/main/jar.lua"
+local SELF_BOOT_DELAY = 1.0
+
+local function hasFS()
+    return typeof(readfile)=="function" and typeof(isfile)=="function" and typeof(loadstring)=="function"
+end
+
+local autoTP, autoSwing, autoRejoin, autoIslandTP, autoObby = true, true, false, false, false
+
+--- Settings persistence
+local SETTINGS_FILE = "FairyJar.settings.json"
+local function canSave()
+    return hasFS() and typeof(writefile)=="function"
+end
+local function saveSettings()
+    if not canSave() then return end
+    local ok, json = pcall(HttpService.JSONEncode, HttpService, {
+    autoTP = autoTP,
+    autoSwing = autoSwing,
+    autoRejoin = autoRejoin,
+    autoIslandTP = autoIslandTP,
+    autoObby = autoObby,
+    })
+    if ok then
+        pcall(writefile, SETTINGS_FILE, json)
+        print("[FairyJar] settings saved:", SETTINGS_FILE)
+    end
+end
+local function loadSettings()
+    if not hasFS() or not isfile(SETTINGS_FILE) then return end
+    local ok, content = pcall(readfile, SETTINGS_FILE)
+    if not ok or type(content)~='string' or #content==0 then return end
+    local ok2, data = pcall(HttpService.JSONDecode, HttpService, content)
+    if not ok2 or type(data)~='table' then return end
+    if typeof(data.autoTP)=="boolean" then autoTP = data.autoTP end
+    if typeof(data.autoSwing)=="boolean" then autoSwing = data.autoSwing end
+    if typeof(data.autoRejoin)=="boolean" then autoRejoin = data.autoRejoin end
+    if typeof(data.autoIslandTP)=="boolean" then autoIslandTP = data.autoIslandTP end
+    if typeof(data.autoObby)=="boolean" then autoObby = data.autoObby end
+    print("[FairyJar] settings loaded from:", SETTINGS_FILE)
+end
+
+local function getQOT()
+    
+    return (syn and syn.queue_on_teleport)
+        or (queue_on_teleport)      -- KRNL / Fluxus / etc.
+        or (fluxus and fluxus.queue_on_teleport)
+end
+
+-- QOT payload that fetches via HTTP/HttpGet, falls back to local file
+local function buildLoader(url, file, delaySec)
+    return ( [[task.spawn(function()
+        repeat task.wait() until game and game:IsLoaded()
+        local _d=%f; if _d and _d>0 then task.wait(_d) end
+        local src = nil
+        local ok, err = pcall(function()
+            src = game:HttpGet(%q)
+        end)
+        if not ok or type(src)~="string" or #src==0 then
+            warn("[FairyJar QOT] HttpGet failed, trying local file")
+            ok, src = pcall(readfile, %q)
+            if not ok or type(src)~="string" or #src==0 then
+                warn("[FairyJar QOT] Local file failed")
+                return
+            end
+        end
+        local f = loadstring(src, "FairyJar")
+        if f then pcall(f) end
+    end)]] ):format(delaySec or 0.5, url, file)
+end
+
+
+
+
+
+local function queueSelfOnTeleport()
+    local Q = getQOT()
+    if not Q then
+        warn("[FairyJar] queue_on_teleport not available; use autoexec as fallback.")
+        return
+    end
+    Q(buildLoader(SELF_URL, SELF_FILE, SELF_BOOT_DELAY))
+    print("[FairyJar] queued reexec")
+end
+
+local function armQOT()
+    local Q = getQOT()
+    if Q then
+        Q(buildLoader(SELF_URL, SELF_FILE, SELF_BOOT_DELAY))
+        print("[FairyJar] pre-armed reexec")
+    else
+        warn("[FairyJar] queue_on_teleport missing; consider autoexec fallback.")
+    end
+end
+
+-- Fire on teleport started
+_trackConn(Players.LocalPlayer.OnTeleport:Connect(function(state)
+    if state == Enum.TeleportState.Started then
+        queueSelfOnTeleport()
+    end
+end))
+
+--- Pre-arm at startup
+armQOT()
+
+--- Single instance
+do
+    local old = CoreGui:FindFirstChild('FairyAutoHarvesterUI')
+    if old then
+        old:Destroy()
+    end
+end
+
+--- Helpers
+local function getHRP()
+    local char = LP.Character or LP.CharacterAdded:Wait()
+    return char:WaitForChild('HumanoidRootPart', 5),
+        char:FindFirstChildOfClass('Humanoid'),
+        char
+end
+
+local function toPartOrModel(x)
+    if not x then
+        return nil
+    end
+    if x:IsA('BasePart') then
+        return x
+    end
+    if x:IsA('Model') then
+        return x.PrimaryPart or x:FindFirstChildWhichIsA('BasePart')
+    end
+    return x:FindFirstAncestorWhichIsA('BasePart')
+end
+
+local function zeroVel(hrp, hum)
+    pcall(function()
+        hrp.AssemblyLinearVelocity = Vector3.new()
+        hrp.AssemblyAngularVelocity = Vector3.new()
+        if hum then
+            hum:Move(Vector3.new(), true)
+        end
+    end)
+end
+
+local function aimCameraAt(part)
+    local cam = Workspace.CurrentCamera
+    if not (cam and part) then
+        return
+    end
+    local look = (part.Position - cam.CFrame.Position).Unit
+    local dist = (part.Position - cam.CFrame.Position).Magnitude
+    if dist > 3 then
+        cam.CFrame = CFrame.new(cam.CFrame.Position, cam.CFrame.Position + look)
+    end
+end
+
+local function lockAtTarget(part, seconds)
+    local hrp, hum = getHRP()
+    if not (hrp and part) then
+        return
+    end
+    local targetCF = part.CFrame + Vector3.new(0, Y_OFFSET, 0)
+    zeroVel(hrp, hum)
+    hrp.CFrame = targetCF
+
+    -- keep the character pinned in place very briefly while we swing
+    local t0 = os.clock()
+    local conn
+    conn = RunService.Heartbeat:Connect(function()
+        if (os.clock() - t0) > seconds then
+            if conn then
+                conn:Disconnect()
+            end
+            return
+        end
+        zeroVel(hrp, hum)
+        hrp.CFrame = targetCF
+    end)
+end
+
+local function safeTP(target)
+    local hrp, hum = getHRP()
+    if not hrp or not target then
+        return
+    end
+    local p = toPartOrModel(target)
+    if not p then
+        return
+    end
+    zeroVel(hrp, hum)
+    hrp.CFrame = p.CFrame + Vector3.new(0, Y_OFFSET, 0)
+end
+
+-- Server-side Fairy Island teleport (preferred)
+local function fireFairyWorldTeleport(timeout)
+    timeout = timeout or 5
+    local RS = game:GetService('ReplicatedStorage')
+    local t0 = os.clock()
+    local function remTime()
+        return math.max(0, timeout - (os.clock() - t0))
+    end
+    local gameEvents = RS:WaitForChild('GameEvents', remTime())
+    if not gameEvents then return false, 'GameEvents not found' end
+    local fairyService = gameEvents:WaitForChild('FairyService', remTime())
+    if not fairyService then return false, 'FairyService not found' end
+    local teleportEvent = fairyService:WaitForChild('TeleportFairyWorld', remTime())
+    if not teleportEvent then return false, 'TeleportFairyWorld not found' end
+    local ok, err = pcall(function()
+        teleportEvent:FireServer()
+    end)
+    if not ok then return false, err end
+    return true
+end
+
+--- Auto Fairy Parkour (RewardPoint) one-shot collector
+local _obbyRunning = false
+local function runAutoParkourOnce()
+    if _obbyRunning then return end
+    _obbyRunning = true
+    task.defer(function()
+        local CollectionService      = game:GetService('CollectionService')
+        local ProximityPromptService = game:GetService('ProximityPromptService')
+        local VirtualInputManager    = game:GetService('VirtualInputManager')
+
+        -- tune
+        local TAGS               = { 'FairyParkourPt', 'RewardPoint' }
+        local OBJECT_TEXT_MATCH  = 'Fairy Parkour'
+        local ACTION_TEXT_MATCH  = 'Claim Reward'
+        local ABOVE_Y            = 1.8
+        local HORIZONTAL_OFFSET  = 0.0
+        local HOLD_PAD           = 0.10
+        local BETWEEN_POINTS     = 0.06  -- sped up from 0.20
+        local E_PRESSES          = 3
+        local E_SPAM_GAP         = 0.08
+        local TAP_DURATION       = 0.05
+        local TIMEOUT_PER_POINT  = 2.5
+
+        -- Teleport tuning (lower + faster)
+        local TP_SURFACE_CLEARANCE = 0.35   -- smaller = lower
+        local TP_MAX_DOWNCAST      = 6
+        local FREEZE_PULSE         = 0.06   -- sped up from ~0.12
+
+        local rayParams = RaycastParams.new()
+        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+        local function surfaceSnap(pos, ignoreList)
+            rayParams.FilterDescendantsInstances = ignoreList or {}
+            local origin = pos + Vector3.new(0, TP_MAX_DOWNCAST, 0)
+            local result = Workspace:Raycast(origin, Vector3.new(0, -TP_MAX_DOWNCAST*2, 0), rayParams)
+            if result then
+                return result.Position + Vector3.new(0, TP_SURFACE_CLEARANCE, 0)
+            else
+                return pos + Vector3.new(0, TP_SURFACE_CLEARANCE, 0)
+            end
+        end
+
+        local function waitChar()
+            local c = LP.Character or LP.CharacterAdded:Wait()
+            return c, c:WaitForChild('HumanoidRootPart'), c:WaitForChild('Humanoid')
+        end
+        local function nearestBasePart(inst)
+            if inst:IsA('BasePart') then return inst end
+            local cur = inst
+            for _=1,6 do
+                if not cur then break end
+                if cur:IsA('BasePart') then return cur end
+                cur = cur.Parent
+            end
+            return nil
+        end
+        local function findPrompt(container)
+            local best = nil
+            for _, d in ipairs(container:GetDescendants()) do
+                if d:IsA('ProximityPrompt') then
+                    best = best or d
+                    local ot, at = d.ObjectText or '', d.ActionText or ''
+                    if tostring(ot):find(OBJECT_TEXT_MATCH) or tostring(at):find(ACTION_TEXT_MATCH) then
+                        return d
+                    end
+                end
+            end
+            return best
+        end
+        local function collectTargets()
+            local seen, list = {}, {}
+            for _, tag in ipairs(TAGS) do
+                for _, inst in ipairs(CollectionService:GetTagged(tag)) do
+                    local bp = nearestBasePart(inst)
+                    if bp and not seen[bp] then
+                        seen[bp] = true
+                        table.insert(list, bp)
+                    end
+                end
+            end
+            for _, d in ipairs(Workspace:GetDescendants()) do
+                if d:IsA('ProximityPrompt') then
+                    local ot, at = d.ObjectText or '', d.ActionText or ''
+                    if tostring(ot):find(OBJECT_TEXT_MATCH) or tostring(at):find(ACTION_TEXT_MATCH) then
+                        local bp = nearestBasePart(d)
+                        if bp and not seen[bp] then
+                            seen[bp] = true
+                            table.insert(list, bp)
+                        end
+                    end
+                end
+            end
+            return list
+        end
+        local function tpAbove(hrp, target)
+            local placePos = surfaceSnap(target.Position, {LP.Character})
+            local dest = Vector3.new(target.Position.X + HORIZONTAL_OFFSET, placePos.Y, target.Position.Z)
+            hrp.CFrame = CFrame.new(dest, dest + (hrp.CFrame.LookVector))
+            hrp.Anchored = true
+            task.wait(FREEZE_PULSE)
+            hrp.Anchored = false
+        end
+        local function freeze(hum, hrp)
+            local save = {
+                WalkSpeed  = hum.WalkSpeed,
+                JumpPower  = hum.JumpPower,
+                AutoRotate = hum.AutoRotate,
+                Anchored   = hrp.Anchored,
+            }
+            hum.WalkSpeed  = 0
+            hum.JumpPower  = 0
+            hum.AutoRotate = false
+            hrp.Anchored   = true
+            return save
+        end
+        local function unfreeze(hum, hrp, save)
+            if hum and hum.Parent then
+                hum.WalkSpeed  = save.WalkSpeed  or 16
+                hum.JumpPower  = save.JumpPower  or 50
+                hum.AutoRotate = (save.AutoRotate ~= nil) and save.AutoRotate or true
+            end
+            if hrp and hrp.Parent then
+                hrp.Anchored = save.Anchored or false
+            end
+        end
+        local function sendKeyPress(key, duration)
+            VirtualInputManager:SendKeyEvent(true, key, false, game)
+            task.wait(duration)
+            VirtualInputManager:SendKeyEvent(false, key, false, game)
+        end
+        local function tryTrigger(prompt)
+            local key  = (prompt.KeyboardKeyCode ~= Enum.KeyCode.Unknown) and prompt.KeyboardKeyCode or Enum.KeyCode.E
+            local hold = (prompt.HoldDuration or 0) + HOLD_PAD
+            for i = 1, E_PRESSES do
+                local fired =
+                    ((typeof(getgenv) == 'function' and typeof(getgenv().fireproximityprompt) == 'function') and pcall(getgenv().fireproximityprompt, prompt)) or
+                    ((typeof(_G.fireproximityprompt) == 'function') and pcall(_G.fireproximityprompt, prompt)) or
+                    ((typeof(fireproximityprompt) == 'function') and pcall(fireproximityprompt, prompt))
+                if not fired then
+                    if i == 1 and (prompt.HoldDuration or 0) > 0 then
+                        sendKeyPress(key, hold)
+                    else
+                        sendKeyPress(key, TAP_DURATION)
+                    end
+                end
+                if i < E_PRESSES then task.wait(E_SPAM_GAP) end
+            end
+        end
+        local function waitForPrompt(prompt, timeout)
+            local done = false
+            local conn
+            conn = _trackConn(ProximityPromptService.PromptTriggered:Connect(function(pr, plr)
+                if pr == prompt and (plr == nil or plr == LP) then
+                    done = true
+                end
+            end))
+            local t0 = time()
+            while not done and (time() - t0) < timeout do
+                task.wait(0.05)
+            end
+            if conn then pcall(function() conn:Disconnect() end) end
+            return done
+        end
+
+        local _, hrp, hum = waitChar()
+        local targets = collectTargets()
+        if #targets == 0 then
+            warn('[AutoFairyParkour] No targets found. Tweak TAGS/text.')
+            _obbyRunning = false
+            return
+        end
+        table.sort(targets, function(a, b)
+            return (a.Position - hrp.Position).Magnitude < (b.Position - hrp.Position).Magnitude
+        end)
+        print(('[AutoFairyParkour] %d targets.'):format(#targets))
+        for _, part in ipairs(targets) do
+            if not part or not part.Parent then continue end
+            local prompt = findPrompt(part)
+            if not prompt then
+                warn('[AutoFairyParkour] Skipping (no prompt found): ', part:GetFullName())
+                continue
+            end
+            tpAbove(hrp, part)
+            local ok, err = pcall(function()
+                if not prompt.Enabled then task.wait(0.10) end
+                if prompt.Enabled then
+                    tryTrigger(prompt)
+                    waitForPrompt(prompt, TIMEOUT_PER_POINT)
+                end
+            end)
+            if not ok then
+                warn('[AutoFairyParkour] Error at point: ', err)
+            end
+            task.wait(BETWEEN_POINTS)
+        end
+        print('[AutoFairyParkour] Done.')
+        _obbyRunning = false
+    end)
+end
+
+--- Forward declaration for Island teleport routine
+local autoIslandTeleport
+
+--- Fairy Island: auto-teleport on startup (optional)
+local ISLAND_HOLD_SECONDS = 2.0 -- unused now; kept for compatibility
+local ISLAND_LIFT_Y = 3         -- unused now; kept for compatibility
+
+autoIslandTeleport = function()
+    -- Preferred: ask the server to teleport us
+    local ok, err = fireFairyWorldTeleport(5)
+    if not ok then
+        warn("[FairyJar] TeleportFairyWorld failed: " .. tostring(err))
+        return false
+    end
+    return true
+end
+
+-- net finder / equipper
+local function looksLikeFairyNet(tool)
+    if not tool or not tool:IsA('Tool') then
+        return false
+    end
+    if tool:GetAttribute('FairyNet') == true then
+        return true
+    end
+    if tool:FindFirstChild('FairyNetV2Handler', true) then
+        return true
+    end
+    local n = string.lower(tool.Name)
+    return (n:find('fairy') ~= nil) and (n:find('net') ~= nil)
+end
+
+local function findNetToolAnywhere()
+    local _, _, char = getHRP()
+    local backpack = LP:FindFirstChildOfClass('Backpack')
+        or LP:FindFirstChild('Backpack')
+    local function scan(container)
+        if not container then
+            return nil
+        end
+        for _, t in ipairs(container:GetChildren()) do
+            if looksLikeFairyNet(t) then
+                return t
+            end
+        end
+        return nil
+    end
+    return scan(char) or scan(backpack)
+end
+
+local function ensureNetEquipped(timeout)
+    timeout = timeout or 3.0
+    local hrp, hum, char = getHRP()
+    local t0 = os.clock()
+    repeat
+        local tool = findNetToolAnywhere()
+        if tool then
+            if tool.Parent ~= char and hum then
+                pcall(function()
+                    hum:EquipTool(tool)
+                end)
+            end
+            if tool.Parent ~= char then
+                pcall(function()
+                    tool.Parent = char
+                end)
+            end
+            if tool.Parent == char then
+                return tool
+            end
+        end
+        RunService.Heartbeat:Wait()
+    until (os.clock() - t0) > timeout
+    return nil
+end
+
+-- prompts (we DO NOT trigger them)
+local function isFairyPrompt(prompt)
+    return tostring(prompt.ObjectText or ''):lower() == FAIRY_OBJECTTEXT
+end
+
+local function anchorFromPrompt(prompt)
+    return (
+        prompt
+        and prompt.Parent
+        and (prompt.Parent:FindFirstAncestorOfClass('Model') or prompt.Parent)
+    )
+end
+
+local function findPromptUnder(inst)
+    if not inst then
+        return nil
+    end
+    for _, d in ipairs(inst:GetDescendants()) do
+        if d:IsA('ProximityPrompt') and isFairyPrompt(d) then
+            return d
+        end
+    end
+    return nil
+end
+
+local function temporarilyDisablePrompt(anchor, dur)
+    local p = findPromptUnder(anchor)
+    if not p then
+        return
+    end
+    local old = p.Enabled
+    p.Enabled = false
+    task.delay(dur or 1.25, function()
+        if p then
+            p.Enabled = old
+        end
+    end)
+end
+
+-- swing only (no E) — more robust via multiple inputs + aim + lock
+local function swingNetAt(anchor)
+    local tool = ensureNetEquipped(2.5)
+    if not tool then
+        return false, 'no Fairy Net found'
+    end
+
+    local part = toPartOrModel(anchor)
+    if not part then
+        return false, 'no target part'
+    end
+
+    temporarilyDisablePrompt(anchor, SWING_BURST * SWING_GAP + 0.5)
+
+    -- lock and aim to improve hit registration
+    aimCameraAt(part)
+    lockAtTarget(part, LOCK_SECONDS)
+
+    local vim = game:FindService('VirtualInputManager')
+    local vuser = game:FindService('VirtualUser')
+    local cam = Workspace.CurrentCamera
+
+    for _ = 1, SWING_BURST do
+        -- Path A: Tool:Activate
+        pcall(function()
+            tool:Activate()
+        end)
+
+        -- Path B: mouse click via VIM
+        if vim and cam then
+            local vp = cam.ViewportSize
+            local x, y = math.floor(vp.X / 2), math.floor(vp.Y / 2)
+            pcall(function()
+                vim:SendMouseButtonEvent(x, y, 0, true, game, 0)
+                vim:SendMouseButtonEvent(x, y, 0, false, game, 0)
+            end)
+        end
+
+        -- Path C: VirtualUser fallback (some executors prefer this)
+        if vuser then
+            pcall(function()
+                vuser:CaptureController()
+                vuser:ClickButton1(Vector2.new())
+            end)
+        end
+
+        RunService.Heartbeat:Wait() -- frame-accurate pacing
+        task.wait(SWING_GAP)
+    end
+    return true
+end
+
+--- State
+local Anchors = {}
+local AnchorSet = setmetatable({}, { __mode = 'k' })
+local AnchorCons = {}
+local Queue, InQueue = {}, setmetatable({}, { __mode = 'k' })
+local workerRunning = false
+--- Load persisted settings
+pcall(loadSettings)
+
+--- GUI (clean layout)
+local gui = Instance.new('ScreenGui')
+gui.Name = 'FairyAutoHarvesterUI'
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+gui.Parent = CoreGui
+_trackInst(gui)
+
+local card = Instance.new('Frame')
+card.Name = 'Card'
+card.Size = UDim2.fromOffset(520, 320)
+card.Position = UDim2.new(0.5, -260, 0.22, -110)
+card.BackgroundColor3 = Color3.fromRGB(28, 30, 38)
+card.Active, card.Draggable = true, true
+card.Parent = gui
+Instance.new('UICorner', card).CornerRadius = UDim.new(0, 12)
+local stroke = Instance.new('UIStroke')
+stroke.Color = Color3.fromRGB(60, 65, 85)
+stroke.Thickness = 1
+stroke.Parent = card
+local pad = Instance.new('UIPadding')
+pad.PaddingTop = UDim.new(0, 10)
+pad.PaddingBottom = UDim.new(0, 10)
+pad.PaddingLeft = UDim.new(0, 12)
+pad.PaddingRight = UDim.new(0, 12)
+pad.Parent = card
+
+--- Minimized bubble (restore)
+local minBubble = Instance.new('TextButton')
+minBubble.Name = 'FairyJarMinBubble'
+minBubble.Text = ''
+minBubble.AutoButtonColor = true
+minBubble.Visible = false
+minBubble.Size = UDim2.fromOffset(36, 36)
+minBubble.AnchorPoint = Vector2.new(0.5, 0.5)
+minBubble.Position = UDim2.new(0.25, 0, 0.25, 0)
+minBubble.BackgroundColor3 = Color3.fromRGB(40, 42, 54)
+minBubble.TextColor3 = Color3.fromRGB(230, 230, 230)
+minBubble.Parent = gui
+do
+    local c = Instance.new('UICorner')
+    c.CornerRadius = UDim.new(0, 18)
+    c.Parent = minBubble
+    local s = Instance.new('UIStroke')
+    s.Color = Color3.fromRGB(60, 65, 85)
+    s.Thickness = 1
+    s.Parent = minBubble
+end
+minBubble.MouseButton1Click:Connect(function()
+    card.Visible = true
+    minBubble.Visible = false
+end)
+
+local vlist = Instance.new('UIListLayout')
+vlist.Parent = card
+vlist.HorizontalAlignment = Enum.HorizontalAlignment.Center
+vlist.VerticalAlignment = Enum.VerticalAlignment.Top
+vlist.Padding = UDim.new(0, 8)
+vlist.SortOrder = Enum.SortOrder.LayoutOrder
+
+local header = Instance.new('Frame')
+header.BackgroundTransparency = 1
+header.Size = UDim2.new(1, 0, 0, 26)
+header.Parent = card
+
+local hpad = Instance.new('UIPadding')
+hpad.PaddingLeft = UDim.new(0, 4)
+hpad.PaddingRight = UDim.new(0, 4)
+hpad.Parent = header
+
+local title = Instance.new('TextLabel')
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.Text = 'Fairy Jar'
+title.TextSize = 16
+title.TextColor3 = Color3.fromRGB(235, 235, 245)
+title.TextXAlignment = Enum.TextXAlignment.Center
+title.Size = UDim2.new(1, -56, 1, 0)
+title.Parent = header
+
+--- Minimize button
+local minimize = Instance.new('TextButton')
+minimize.Text = '-'
+minimize.Font = Enum.Font.Gotham
+minimize.TextSize = 14
+minimize.TextColor3 = Color3.fromRGB(230, 230, 230)
+minimize.BackgroundColor3 = Color3.fromRGB(40, 42, 54)
+minimize.Size = UDim2.fromOffset(24, 24)
+minimize.Position = UDim2.new(1, -52, 0.5, -12)
+minimize.Parent = header
+do
+    local c = Instance.new('UICorner')
+    c.CornerRadius = UDim.new(0, 6)
+    c.Parent = minimize
+    local s = Instance.new('UIStroke')
+    s.Color = Color3.fromRGB(60, 65, 85)
+    s.Parent = minimize
+end
+minimize.MouseButton1Click:Connect(function()
+    card.Visible = false
+    minBubble.Visible = true
+end)
+
+local close = Instance.new('TextButton')
+close.Text = 'X'
+close.Font = Enum.Font.Gotham
+close.TextSize = 14
+close.TextColor3 = Color3.fromRGB(230, 230, 230)
+close.BackgroundColor3 = Color3.fromRGB(40, 42, 54)
+close.Size = UDim2.fromOffset(24, 24)
+close.Position = UDim2.new(1, -24, 0.5, -12)
+close.Parent = header
+Instance.new('UICorner', close).CornerRadius = UDim.new(0, 6)
+Instance.new('UIStroke', close).Color = Color3.fromRGB(60, 65, 85)
+close.MouseButton1Click:Connect(function()
+    if gui.Parent then
+        gui:Destroy()
+    end
+end)
+
+local statusLbl = Instance.new('TextLabel')
+statusLbl.BackgroundTransparency = 1
+statusLbl.Font = Enum.Font.Gotham
+statusLbl.Text = 'Status: idle'
+statusLbl.TextSize = 12
+statusLbl.TextColor3 = Color3.fromRGB(170, 175, 190)
+statusLbl.Size = UDim2.new(1, -8, 0, 18)
+statusLbl.Parent = card
+
+local countLbl = Instance.new('TextLabel')
+countLbl.BackgroundTransparency = 1
+countLbl.Font = Enum.Font.GothamBold
+countLbl.Text = 'Detected fairies: 0'
+countLbl.TextSize = 13
+countLbl.TextColor3 = Color3.fromRGB(200, 230, 200)
+countLbl.Size = UDim2.new(1, -8, 0, 18)
+countLbl.Parent = card
+
+--- Toggles
+local row = Instance.new('Frame')
+row.BackgroundTransparency = 1
+row.Size = UDim2.new(1, 0, 0, 84)
+row.Parent = card
+
+local grid = Instance.new('UIGridLayout')
+grid.Parent = row
+grid.CellPadding = UDim2.new(0, 8, 0, 6)
+grid.FillDirection = Enum.FillDirection.Horizontal
+grid.FillDirectionMaxCells = 3
+grid.HorizontalAlignment = Enum.HorizontalAlignment.Center
+grid.VerticalAlignment = Enum.VerticalAlignment.Center
+grid.SortOrder = Enum.SortOrder.LayoutOrder
+grid.CellSize = UDim2.new(1 / 3, -8, 0, 36)
+
+local function mkToggle(textOn, textOff, startOn, onChange)
+    local b = Instance.new('TextButton')
+    b.Text = startOn and textOn or textOff
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 13
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.BackgroundColor3 = startOn and Color3.fromRGB(65, 160, 85)
+        or Color3.fromRGB(160, 90, 60)
+    b.Parent = row
+    Instance.new('UICorner', b).CornerRadius = UDim.new(0, 8)
+    Instance.new('UIStroke', b).Color = Color3.fromRGB(60, 65, 85)
+    local bpad = Instance.new('UIPadding')
+    bpad.PaddingLeft = UDim.new(0, 6)
+    bpad.PaddingRight = UDim.new(0, 6)
+    bpad.Parent = b
+    b.MouseButton1Click:Connect(function()
+        local on = not (b.Text == textOn)
+        b.Text = on and textOn or textOff
+        b.BackgroundColor3 = on and Color3.fromRGB(65, 160, 85)
+            or Color3.fromRGB(160, 90, 60)
+        onChange(on)
+    end)
+    return b
+end
+
+mkToggle('Auto-TP: ON', 'Auto-TP: OFF', autoTP, function(on)
+    autoTP = on
+    print("[FairyJar] Auto-TP ->", on and "ON" or "OFF")
+    saveSettings()
+end)
+mkToggle('Auto Collect: ON', 'Auto Collect: OFF', autoSwing, function(on)
+    autoSwing = on
+    print("[FairyJar] Auto Collect ->", on and "ON" or "OFF")
+    saveSettings()
+end)
+mkToggle('Auto Rejoin: ON', 'Auto Rejoin: OFF', autoRejoin, function(on)
+    autoRejoin = on
+    print("[FairyJar] Auto Rejoin ->", on and "ON" or "OFF")
+    saveSettings()
+end)
+
+--- Auto Island TP toggle
+local islandToggleBtn = mkToggle('Island TP: ON', 'Island TP: OFF', autoIslandTP, function(on)
+    autoIslandTP = on
+    print("[FairyJar] Auto Island TP ->", on and "ON" or "OFF")
+    saveSettings()
+    if on then
+        task.defer(function()
+            autoIslandTeleport()
+            if autoObby then
+                task.wait(1.0)
+                runAutoParkourOnce()
+            end
+        end)
+    end
+end)
+
+--- Auto Obby (Parkour) toggle
+local obbyToggleBtn = mkToggle('Auto Obby: ON', 'Auto Obby: OFF', autoObby, function(on)
+    autoObby = on
+    print("[FairyJar] Auto Obby ->", on and "ON" or "OFF")
+    saveSettings()
+    if on then
+        task.defer(function()
+            -- Ensure Island TP is ON visually and logically
+            if not autoIslandTP then
+                autoIslandTP = true
+                if islandToggleBtn then
+                    islandToggleBtn.Text = 'Island TP: ON'
+                    islandToggleBtn.BackgroundColor3 = Color3.fromRGB(65, 160, 85)
+                end
+                saveSettings()
+            end
+            -- Run Island TP first, then obby after a short delay
+            autoIslandTeleport()
+            task.wait(1.0)
+            runAutoParkourOnce()
+        end)
+    end
+end)
+
+local foot = Instance.new('TextLabel')
+foot.BackgroundTransparency = 1
+foot.Font = Enum.Font.Gotham
+foot.Text = ('Y offset: %.2f'):format(Y_OFFSET)
+foot.TextSize = 12
+foot.TextColor3 = Color3.fromRGB(160, 170, 190)
+foot.Size = UDim2.new(1, -8, 0, 18)
+foot.Parent = card
+
+local function setStatus(t)
+    statusLbl.Text = 'Status: ' .. t
+end
+local function setCount(n)
+    countLbl.Text = ('Detected fairies: %d'):format(n)
+end
+
+--- Book-keeping
+local function updateCountLabel()
+    local i = 1
+    while i <= #Anchors do
+        local a = Anchors[i]
+        if not (a and a.Parent) then
+            local dead = table.remove(Anchors, i)
+            AnchorSet[dead] = nil
+            local cons = AnchorCons[dead]
+            if cons then
+                for _, c in ipairs(cons) do
+                    pcall(function()
+                        c:Disconnect()
+                    end)
+                end
+            end
+            AnchorCons[dead] = nil
+        else
+            i += 1
+        end
+    end
+    setCount(#Anchors)
+end
+
+local function enqueue(anchor)
+    if not anchor or InQueue[anchor] then
+        return
+    end
+    InQueue[anchor] = true
+    table.insert(Queue, anchor)
+end
+
+local function processAnchor(anchor)
+    if not (anchor and anchor.Parent) then
+        return
+    end
+    local part = toPartOrModel(anchor)
+    if autoTP then
+        setStatus('TP → ' .. (anchor.Name or 'fairy'))
+        safeTP(part)
+        task.wait(0.10)
+    end
+    if autoSwing then
+        setStatus('swinging net')
+        local ok, err = swingNetAt(anchor)
+        if not ok then
+            setStatus(err or 'swing failed')
+        else
+            setStatus('done')
+        end
+    else
+        setStatus('queued (auto swing OFF)')
+    end
+end
+
+----------------------------------------------------------------
+-- REJOIN (simplified: just Teleport to the same place)
+----------------------------------------------------------------
+local _rejoinInFlight = false
+
+local function rejoinNow(reason)
+    if _rejoinInFlight then return end
+    _rejoinInFlight = true
+    setStatus('rejoining…')
+    print(("[FairyJar] Rejoin requested%s"):format(reason and (" ("..tostring(reason)..")") or ""))
+
+    -- Ensure the loader is queued so the script runs after teleport
+    queueSelfOnTeleport()
+
+    local ok, err = pcall(function()
+        TeleportService:Teleport(game.PlaceId, LP)
+    end)
+    if not ok then
+        warn("[FairyJar] Teleport failed: " .. tostring(err))
+        _rejoinInFlight = false
+    end
+end
+
+-- Expose manual entry point (console): _G.FairyAutoHarvester_RejoinNow()
+_G.FairyAutoHarvester_RejoinNow = function()
+    rejoinNow('Manual rejoin')
+end
+
+-- (Optional) Hotkey: Alt+R to rejoin now
+_trackConn(UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.KeyCode == Enum.KeyCode.R and UserInputService:IsKeyDown(Enum.KeyCode.LeftAlt) then
+        rejoinNow('Alt+R')
+    end
+end))
+
+-- UI: TP Island button (manual one-time Island teleport)
+do
+    local tpBtn = Instance.new('TextButton')
+    tpBtn.Name = 'TPIsland'
+    tpBtn.Text = 'Teleport to Fairy Island'
+    tpBtn.Font = Enum.Font.GothamBold
+    tpBtn.TextSize = 14
+    tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tpBtn.BackgroundColor3 = Color3.fromRGB(80, 160, 90)
+    tpBtn.Size = UDim2.new(1, 0, 0, 36)
+    tpBtn.AutoButtonColor = true
+    tpBtn.Parent = card
+    Instance.new('UICorner', tpBtn).CornerRadius = UDim.new(0, 8)
+    local tpStroke = Instance.new('UIStroke')
+    tpStroke.Color = Color3.fromRGB(60, 65, 85)
+    tpStroke.Thickness = 1
+    tpStroke.Parent = tpBtn
+
+    tpBtn.MouseButton1Click:Connect(function()
+        -- Auto TP to FairyIsland.TeleportDestination, hold 2s, then auto-disable
+        -- paste in console
+
+        local Players     = game:GetService("Players")
+        local RunService  = game:GetService("RunService")
+        local Workspace   = game:GetService("Workspace")
+
+        local LP = Players.LocalPlayer
+        local HOLD_SECONDS = 2.0            -- how long to fight the server before disabling
+        local LIFT_Y       = 3               -- lift above the TeleportDestination to avoid floor clipping
+
+        -- --- helpers ---
+        local function HRP()
+            local c = LP.Character or LP.CharacterAdded:Wait()
+            local h = c:FindFirstChild("HumanoidRootPart")
+            while not h do
+                h = c:FindFirstChild("HumanoidRootPart")
+                task.wait(0.05)
+            end
+            return h
+        end
+
+        local function findDest()
+            local node = Workspace
+            node = node:FindFirstChild("Interaction"); if not node then return nil end
+            node = node:FindFirstChild("UpdateItems"); if not node then return nil end
+            node = node:FindFirstChild("FairyIsland"); if not node then return nil end
+            node = node:FindFirstChild("FairyIsland"); if not node then return nil end
+            node = node:FindFirstChild("Decor"); if not node then return nil end
+            node = node:FindFirstChild("EntryFairyPond"); if not node then return nil end
+            if node:IsA("BasePart") then return node end
+            if node:IsA("Model") then
+                local pp = node.PrimaryPart or node:FindFirstChildWhichIsA("BasePart", true)
+                return pp
+            end
+            return nil
+        end
+
+        local function waitForDest()
+            local dest = findDest()
+            while not dest do
+                task.wait(0.25)
+                dest = findDest()
+            end
+            return dest
+        end
+
+        local function forceTo(cf)
+            local h = HRP()
+            -- zero velocities to reduce rubber-banding while holding
+            pcall(function()
+                h.AssemblyLinearVelocity  = Vector3.new()
+                h.AssemblyAngularVelocity = Vector3.new()
+            end)
+            h.CFrame = cf
+        end
+
+        -- --- main ---
+        task.spawn(function()
+            local dest = waitForDest()
+            local targetCF = dest.CFrame + Vector3.new(0, LIFT_Y, 0)
+
+            -- initial teleport
+            forceTo(targetCF)
+            if toast then toast("2 second wait") end
+            warn("[FAIRY] Teleported to TeleportDestination; holding for "..HOLD_SECONDS.."s...")
+
+            -- hold for exactly N seconds, then stop automatically
+            local t0 = tick()
+            local holdConnRS, holdConnHB
+
+            local function shouldHold()
+                return (tick() - t0) <= HOLD_SECONDS
+            end
+
+            holdConnRS = RunService.RenderStepped:Connect(function()
+                if shouldHold() then
+                    forceTo(targetCF)
+                else
+                    if holdConnRS then holdConnRS:Disconnect() end
+                end
+            end)
+
+            -- optional: double up on Heartbeat too (helps against some server pulls)
+            holdConnHB = RunService.Heartbeat:Connect(function()
+                if not shouldHold() then
+                    if holdConnHB then holdConnHB:Disconnect() end
+                end
+            end)
+
+            -- wait out the hold, then announce disabled
+            task.delay(HOLD_SECONDS, function()
+                warn("[FAIRY] Hold disabled automatically after "..HOLD_SECONDS.."s.")
+            end)
+        end)
+    end)
+end
+
+-- UI: Rejoin button
+do
+    local rejoinBtn = Instance.new('TextButton')
+    rejoinBtn.Name = 'Rejoin'
+    rejoinBtn.Text = 'Rejoin'
+    rejoinBtn.Font = Enum.Font.GothamBold
+    rejoinBtn.TextSize = 14
+    rejoinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    rejoinBtn.BackgroundColor3 = Color3.fromRGB(70, 120, 200)
+    rejoinBtn.Size = UDim2.new(1, 0, 0, 36)
+    rejoinBtn.AutoButtonColor = true
+    rejoinBtn.Parent = card
+    Instance.new('UICorner', rejoinBtn).CornerRadius = UDim.new(0, 8)
+    local tStroke = Instance.new('UIStroke')
+    tStroke.Color = Color3.fromRGB(60, 65, 85)
+    tStroke.Thickness = 1
+    tStroke.Parent = rejoinBtn
+
+    rejoinBtn.MouseButton1Click:Connect(function()
+        setStatus('rejoining…')
+        rejoinNow('UI rejoin')
+    end)
+end
+
+----------------------------------------------------------------
+-- Worker
+----------------------------------------------------------------
+local function runWorker()
+    if workerRunning then
+        return
+    end
+    workerRunning = true
+    setStatus('worker running')
+    while #Queue > 0 do
+        local a = table.remove(Queue, 1)
+        InQueue[a] = nil
+        pcall(processAnchor, a)
+        task.wait(0.18)
+    end
+    workerRunning = false
+    setStatus('idle')
+
+    -- Auto rejoin when queue stays empty briefly
+    if autoRejoin then
+        local t0 = os.clock()
+        while (os.clock() - t0) < 0.75 do
+            if #Queue > 0 then
+                return
+            end
+            RunService.Heartbeat:Wait()
+        end
+        -- mirror your snippet's logic:
+        -- if alone => Kick + Teleport(place)
+        -- else      => TeleportToPlaceInstance(place, jobId)
+        rejoinNow('Auto rejoin')
+    end
+end
+
+local function kickWorker()
+    if not workerRunning and #Queue > 0 then
+        task.defer(function()
+            RunService.Heartbeat:Wait() -- allow bursts to coalesce
+            if not workerRunning and #Queue > 0 then
+                runWorker()
+            end
+        end)
+    end
+end
+
+local function trackAnchor(anchor)
+    if not anchor or AnchorSet[anchor] then
+        return
+    end
+    AnchorSet[anchor] = true
+    table.insert(Anchors, anchor)
+    AnchorCons[anchor] = AnchorCons[anchor] or {}
+    table.insert(
+        AnchorCons[anchor],
+        _trackConn(anchor.AncestryChanged:Connect(function(_, parent)
+            if parent == nil then
+                updateCountLabel()
+            end
+        end))
+    )
+    updateCountLabel()
+    enqueue(anchor)
+    kickWorker()
+end
+
+---------------- Detection (existing + new) ----------------
+local function attachPromptWatchers(prompt)
+    local function check()
+        if prompt.Enabled and isFairyPrompt(prompt) then
+            local a = anchorFromPrompt(prompt)
+            if a then
+                trackAnchor(a)
+            end
+        end
+    end
+    check()
+    _trackConn(prompt:GetPropertyChangedSignal('Enabled'):Connect(check))
+    _trackConn(prompt:GetPropertyChangedSignal('ObjectText'):Connect(check))
+end
+
+-- initial pass (prompts only)
+for _, inst in ipairs(Workspace:GetDescendants()) do
+    if inst:IsA('ProximityPrompt') then
+        attachPromptWatchers(inst)
+    end
+end
+kickWorker() -- start immediately if initial scan queued anything
+
+-- live hooks
+_trackConn(Workspace.DescendantAdded:Connect(function(obj)
+    if obj:IsA('ProximityPrompt') then
+        attachPromptWatchers(obj)
+    end
+end))
+
+_trackConn(PPS.PromptShown:Connect(function(prompt)
+    if isFairyPrompt(prompt) then
+        local a = anchorFromPrompt(prompt)
+        if a then
+            trackAnchor(a)
+        end
+    end
+end))
+
+print(
+    '[FairyAutoCollect]'
+)
+
+-- Startup auto Island TP if configured
+task.spawn(function()
+    -- wait for game, player, and a tiny settle
+    repeat task.wait() until game and game:IsLoaded()
+    local ok = pcall(function() local _ = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait() end)
+    task.wait(0.5)
+    if autoIslandTP then
+        autoIslandTeleport()
+        if autoObby then
+            task.wait(1.0)
+            runAutoParkourOnce()
+        end
+    end
+end)
