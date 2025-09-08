@@ -66,6 +66,8 @@ local function hasFS()
 end
 
 local autoTP, autoSwing, autoRejoin, autoIslandTP, autoObby = true, true, false, false, false
+-- seconds to wait with empty queue before auto-rejoining
+local rejoinDelay = 0.75
 
 --- Settings persistence
 local SETTINGS_FILE = "FairyJar.settings.json"
@@ -80,6 +82,7 @@ local function saveSettings()
     autoRejoin = autoRejoin,
     autoIslandTP = autoIslandTP,
     autoObby = autoObby,
+    rejoinDelay = rejoinDelay,
     })
     if ok then
         pcall(writefile, SETTINGS_FILE, json)
@@ -97,6 +100,7 @@ local function loadSettings()
     if typeof(data.autoRejoin)=="boolean" then autoRejoin = data.autoRejoin end
     if typeof(data.autoIslandTP)=="boolean" then autoIslandTP = data.autoIslandTP end
     if typeof(data.autoObby)=="boolean" then autoObby = data.autoObby end
+    if typeof(data.rejoinDelay)=="number" then rejoinDelay = data.rejoinDelay end
     print("[FairyJar] settings loaded from:", SETTINGS_FILE)
 end
 
@@ -659,7 +663,7 @@ _trackInst(gui)
 
 local card = Instance.new('Frame')
 card.Name = 'Card'
-card.Size = UDim2.fromOffset(520, 320)
+card.Size = UDim2.fromOffset(520, 360)
 card.Position = UDim2.new(0.5, -260, 0.22, -110)
 card.BackgroundColor3 = Color3.fromRGB(28, 30, 38)
 card.Active, card.Draggable = true, true
@@ -892,6 +896,48 @@ foot.TextSize = 12
 foot.TextColor3 = Color3.fromRGB(160, 170, 190)
 foot.Size = UDim2.new(1, -8, 0, 18)
 foot.Parent = card
+
+-- Rejoin delay input
+local rdFrame = Instance.new('Frame')
+rdFrame.BackgroundTransparency = 1
+rdFrame.Size = UDim2.new(1, 0, 0, 28)
+rdFrame.Parent = card
+
+local rdLabel = Instance.new('TextLabel')
+rdLabel.BackgroundTransparency = 1
+rdLabel.Font = Enum.Font.Gotham
+rdLabel.Text = 'Rejoin delay (s):'
+rdLabel.TextSize = 12
+rdLabel.TextColor3 = Color3.fromRGB(160, 170, 190)
+rdLabel.Size = UDim2.new(0, 140, 1, 0)
+rdLabel.AnchorPoint = Vector2.new(0.5, 0)
+rdLabel.Position = UDim2.new(0.5, -60, 0, 0)
+rdLabel.Parent = rdFrame
+
+local rdBox = Instance.new('TextBox')
+rdBox.BackgroundColor3 = Color3.fromRGB(40, 42, 54)
+rdBox.TextColor3 = Color3.fromRGB(230, 230, 230)
+rdBox.Font = Enum.Font.Gotham
+rdBox.TextSize = 14
+rdBox.ClearTextOnFocus = false
+rdBox.Text = tostring(rejoinDelay)
+rdBox.Size = UDim2.new(0, 80, 0, 24)
+rdBox.AnchorPoint = Vector2.new(0.5, 0)
+rdBox.Position = UDim2.new(0.5, 60, 0, 2)
+rdBox.Parent = rdFrame
+Instance.new('UICorner', rdBox).CornerRadius = UDim.new(0, 6)
+
+rdBox.FocusLost:Connect(function(enter)
+    local n = tonumber(rdBox.Text)
+    if type(n) ~= 'number' or n < 0 then
+        -- revert to previous valid value
+        rdBox.Text = tostring(rejoinDelay)
+        return
+    end
+    rejoinDelay = n
+    rdBox.Text = tostring(rejoinDelay)
+    saveSettings()
+end)
 
 local function setStatus(t)
     statusLbl.Text = 'Status: ' .. t
@@ -1153,7 +1199,7 @@ local function runWorker()
     -- Auto rejoin when queue stays empty briefly
     if autoRejoin then
         local t0 = os.clock()
-        while (os.clock() - t0) < 0.75 do
+        while (os.clock() - t0) < rejoinDelay do
             if #Queue > 0 then
                 return
             end
